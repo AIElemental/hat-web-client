@@ -1,2 +1,26 @@
-.hat-word {
+.hidden_div {
+    display: none;
+}
+span.player {
+    display:block;
+}
+span.room {
+    display:inline;
+}
+#page {
+    margin-left: 200px;
+}
+.maintab {
+    float: right;
+    width: 100%;
+    background-color: #F0F0F0;
+}
+.leftfloat{
+    float: left;
+    width: 200px;
+    margin-left: -200px;
+    background-color: #CCCCCC;
+}
+.hidden {
+    display: none;
 }

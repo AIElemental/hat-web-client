@@ -1,24 +1,38 @@
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8">    
+    <!--
+    <meta http-equiv="refresh" content="15; url=hat.html"/>
+    -->
     <title>Hat game client</title>
     <link rel="stylesheet" type="text/css" href="hat.css">
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="hat.js"></script>
 </head>
 <body>
-    <div>
+    <div id="page">
+    <div id="infobox" class="infobox"></div>    
+    <div id="room_create_enter" class="pre-room">
         <div>Create\Enter Room</div>
+        <label for="room_name">Room name</label>
         <input type="text" id="room_name" placeholder="Enter room name"/>
         <br>
+        <label for="room_pass">Room password</label>
         <input type="text" id="room_pass" placeholder="Enter room pass"/>
         <br>
+        <label for="player_name">Your name</label>
         <input type="text" id="player_name" placeholder="Enter your name"/>
+        <br>
+        <label for="hatgame_word_per_player">Words per player</label>
+        <input type="text" id="hatgame_word_per_player" placeholder="Enter a number 10..50" value="25"/>
+        <br>
+        <label for="hatgame_seconds_per_turn">Seconds per turn</label>
+        <input type="text" id="hatgame_seconds_per_turn" placeholder="Enter a number 10..40" value="25"/>
         <br>
         <input type="button" onclick="room_create()" value="Create room"/>
         <input type="button" onclick="room_enter()" value="Enter room"/>
     </div>
-    <div>
+    <div id="room_find" class="pre-room">
         <div>Find Room</div>
         <select id="room_select" size="5">
             <option value="blank">No rooms found</option>
@@ -37,24 +51,66 @@
       })
       .change();
     </script>
-    <div>
+    <div id="room_info">
+        <div>Current room <span class="room_name">Testroomname</span></div>
+        <div id="players_list"></div>
+        <input type="button" onclick="room_reload_players($('#players_list'))" value="Reload room players"/>
+    </div>
+    <div id="room_inroom">
         <div>Game start</div>
-        <label for="hatgame_word_per_player">Words per player</label>
-        <input type="text" id="hatgame_word_per_player" placeholder="Enter a number 10..50" value="25"/>
+        <input type="button" onclick="hatgame_start_new_game()" value="Start new game"/>
         <br>
-        <label for="hatgame_seconds_per_turn">Seconds per turn</label>
-        <input type="text" id="hatgame_seconds_per_turn" placeholder="Enter a number 10..40" value="25"/>
+        <div>Game check</div>
+        <input type="button" onclick="hatgame_check_active_game()" value="Check game"/>
+    </div>
+    <div id="game_word_enter">
+        <div>Word Gen</div>
+        <textarea id='word_enter' type="textarea" cols="40" rows="20" placeholder="Enter words here, one per line"></textarea>
         <br>
-        <input type="button" onclick="hatgame_start_new_game()" value="Start new game"/>            
+        <input type="button" onclick="hatgame_submit_words($('#word_enter'))" value="Submit words"/>
     </div>
-    <div>
-        <div>Word Gen</div>        
+    <div id="game_turn">
+        <div id="hatgame_turn_other">
+            <div>Game - Others turn</div>
+            <input type="text" id="state_turn_player" value="turn player"/>
+            <input type="button" onclick="hatgame_check_my_turn()" value="Check my turn yet"/>
+        </div>
+        <div id="hatgame_turn_me">
+            <div>Game - My turn</div>
+            <span id="turn_timer">time</span>
+            <br>
+            <input type="button" onclick="hatgame_start_turn()" value="Start turn"/>
+            <br>            
+            Current word: <span id="word">ABRAKADARBA</span>
+            <br>
+            <input type="button" onclick="hatgame_next_word()" value="Word done"/>
+            <br>
+            <input type="button" onclick="hatgame_end_turn()" value="Send end turn"/>
+            <br>
+            <input type="text" id="done_words" placeholder="Done words"/>
+            <br>
+            <input type="button" onclick="hatgame_end_turn()" value="Send end turn"/>
+        </div>
     </div>
-    <div>
-        <div>Game</div>
+    <div id="game_aftermath">
+        <div>The game has ended.</div>
     </div>
-    <div id="log">    
-        <div>Log:</div>
+    <div id="log_container">
+        <!--
+        <input type="button" onclick="$('#log').toggle();"
+        value="Toggle log"/>
+        -->
+        <div id="log" style="display:none">
+            <div>Log:</div>
+        </div>
+    </div>
+    <script>        
+        $(window).on('keydown', function(e) {
+            if (e.which == 120) {
+                $("#log").toggle();
+            }
+        });
+    </script>
     </div>
 </body>
 </html>
