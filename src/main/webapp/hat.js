@@ -1,9 +1,19 @@
 /* Hat code */
+/* Config vars */
+var const_game_ping = 3000;
+var const_cooloff_after_turn = 2000;
+
 /* State vars */
+var backend = '';
+var state_room_name = '';
+var state_words_per_player = 20;
 var state_turn_time_sec = 20;
-var state_player_name;
-var state_turn_name;
+var state_player_name = '';
+var state_turn_name = '';
+var turn_active = false;
 var state_checking_turn = false;
+var words_done = [];
+var words_for_turn = [];
 
 var const_ui_state_pre_room = 0;
 var const_ui_state_in_room = 1;
@@ -38,32 +48,86 @@ function log(message) {
 }
 
 var timerId;
-function activateTimer(jqueryElement) {
+function activateTimer(time) {
     var start = new Date;    
     timerId = setInterval(function() {
-        jqueryElement.text((new Date - start) / 1000 + " Seconds");
+        get_turn_timer().text(Math.round((time - (new Date - start) / 1000)) + " Seconds");
     }, 171);
 }
 function stopTimer() {
-    clearInterval(timerId);
+    clearInterval(timerId);    
 }
 
 function scrollTo(jqueryElement) {
     $("body").scrollTop(jqueryElement.offset().top);
 }
 
+function post_message(message) {
+    message = getDateTime() + ' ' + message;
+    log('post_message: ' + message);
+    $("#infobox").addClass("button warning block-shadow-warning text-shadow").text(message).show();
+}
+
+/* State change functions */
+function set_player_name(player_name) {
+    /* TODO: save into cookie */
+    state_player_name = player_name;
+}
+
+function set_room_name(room_name) {
+    /* TODO: save room into cookie */
+    state_room_name = room_name;
+    $('#ui_room_name').text(room_name);
+}
+
+function set_room_password(room_pass) {
+    /* TODO: save room into cookie */
+}
+
+function set_words_per_player(words) {
+    /* TODO: save room into cookie */
+    state_words_per_player = words;
+}
+
+function set_turn_time_sec(secs) {
+    /* TODO: save room into cookie */
+    state_turn_time_sec = secs;
+}
+
+function set_backend(url_string) {
+    log('backend at ' + url_string);
+    backend = url_string;
+}
+
 /* Room management functions */
-function room_create() {
-    var room_name = $("#room_name").val();
-    var room_pass = $("#room_pass").val();
-    var player_name = $("#player_name").val();
-    var words_pers = $("#hatgame_word_per_player").val();
-    var sec_turn = $("#hatgame_seconds_per_turn").val();
+function room_enter(room_name, room_pass, player_name, word_per_player, seconds_per_turn) {
+    log('Entering room_name=' + room_name + ' pass=' + room_pass + ' player=' + player_name + ' word=' + word_per_player + ' sec=' + seconds_per_turn);    
+    
+    set_room_name(room_name);
+    set_room_password(room_pass);
+    set_player_name(player_name);
+    set_words_per_player(word_per_player);
+    set_turn_time_sec(seconds_per_turn);
+    
+    set_ui_layout(const_ui_state_in_room);
+    
+    hatgame_check_new_game_schedule();
+    playerReloaderOn();
+}
+
+function room_create(room_name, room_pass, player_name, words_pers, sec_turn) {
     log('Create room' + room_name + ' ' + room_pass + ' ' + player_name + ' ' + words_pers + ' ' + sec_turn);
+    request_create_room(room_name, room_pass, player_name, words_pers, sec_turn, function (result) {
+        room_enter(room_name, room_pass, player_name, words_pers, sec_turn);
+    }, function (result) {
+        post_message('Failed to create room. continuing anyway');
+        room_enter(room_name, room_pass, player_name, words_pers, sec_turn);
+    });
     return;
 }
 
 function room_find() {
+    log('Find rooms');
     var room_names1 = [];
     var room_names2 = ['Test room 1', 'Test room 2'];
     var room_names3 = ['Test room 1', 'Test room 2', 'Test room 3'];    
@@ -86,16 +150,21 @@ function room_find() {
         $('#room_select').val(room_names[0]);
     }
     $('#room_select').change();
+    $('#btn-reload-rooms').removeClass('loading-cube');
     return;
 }
 
-function room_enter() {
-    var room_name = document.getElementById("room_name").value;
-    var room_pass = document.getElementById("room_pass").value;
-    var player_name = document.getElementById("player_name").value;
-    log('Enter room' + room_name + ' ' + room_pass + ' ' + player_name);
+function room_try_enter(room_name, room_pass, player_name) {
+    log('Trying to enter room_name=' + room_name + ' room_pass=' + room_pass + ' player_name=' + player_name);  
     
-    scrollTo($('#room_inroom'));
+    var entered = true;
+    var word_per_player = 99;
+    var seconds_per_turn = 66;
+    if (entered) {
+        room_enter(room_name, room_pass, player_name, word_per_player, seconds_per_turn);
+    } else {
+        post_message('Failed to enter room' + room_name);
+    }
     return;
 }
 
@@ -103,25 +172,57 @@ function request_room_players() {
     return ['Artem', 'Egor', 'Artem S', 'Den'];
 }
 function room_reload_players(jquery_div_container) {
+    log('Reloading players');
     var players = request_room_players();
     var players_html = '';
     for (var i = 0; i < players.length; ++i) {
-        players_html += '<span class="player">' + players[i] + '</span>';
+        players_html += '<span class="ui_player_name">' + players[i] + '</span>';
     }    
     jquery_div_container.html(players_html);
 }
 
+var playerReloaderId;
+function playerReloaderOn() {
+    room_reload_players($('#players_list'));
+    log('Player reloader on');
+    playerReloaderId = setInterval(function () {
+        room_reload_players($('#players_list'));
+    }, const_game_ping);
+}
+function playerReloaderOff() {
+    log('Player reloader off');
+    clearInterval(playerReloaderId);
+}
+
 /* Game functions */
+function enter_new_game() {
+    log('Entering new game');
+    clearInterval(checkerId);
+    playerReloaderOff();
+    set_ui_layout(const_ui_state_word_gen);
+    /* store game state info into cookie */
+}
+
 function hatgame_start_new_game(room_name, word_per_player, seconds_per_turn) {
     log('hatgame_start_new_game(room_name='+room_name+', word_per_player='+word_per_player+', seconds_per_turn='+seconds_per_turn+')');
     var success = true;
     if (success) {
-        scrollTo($('#game_word_enter'));
+        enter_new_game();
     }
 }
 
 function hatgame_check_new_game() {    
-    
+    log('Check for active game');
+    var gameStarted = false;
+    if (gameStarted) {
+        enter_new_game();
+    }        
+}
+var checkerId;
+function hatgame_check_new_game_schedule() {
+    checkerId = setInterval(function () {
+        hatgame_check_new_game();
+    }, const_game_ping);
 }
 
 /* Word generation functions */
@@ -129,6 +230,8 @@ function hatgame_submit_words(jqueryElement) {
     log(jqueryElement.val());
     var success = true;
     if (success) {
+        enter_turn_stage();
+        state_turn_name = state_player_name;
         scrollTo($('#game_turn'));
     }
 }
@@ -136,37 +239,105 @@ function hatgame_submit_words(jqueryElement) {
 /* Step functions */
 function hatgame_check_my_turn() {
     var myTurn = true;
+    words_for_turn = ['Alice','Bob','Charlie','Diamond','Elizabeth','Fiona'];
     if (myTurn) {
         state_checking_turn = false;
-        $('#hatgame_turn_other').hide();
-        $('#hatgame_turn_me').show();
+        enter_turn_my();
     }
 }
 
+var check_my_turn_on_id;
+function check_my_turn_on() {
+    log('my turn checker on');
+    check_my_turn_on_id = setInterval(function () {
+        hatgame_check_my_turn();
+    }, const_game_ping);
+}
+function check_my_turn_off() {
+    clearInterval(check_my_turn_on_id);
+}
+
+function enter_turn_my() {
+    check_my_turn_off();
+    get_turn_timer().text(state_turn_time_sec + " Seconds");
+    $('#done_words_holder').html('');
+    words_done = [];
+    set_ui_layout(const_ui_state_turn_me);
+}
+function enter_turn_other() {
+    check_my_turn_on();
+    set_ui_layout(const_ui_state_turn_other);
+}
+function enter_turn_stage() {
+    if (state_turn_name === state_player_name) {
+        enter_turn_my();
+    } else {
+        enter_turn_other();
+    }
+}
+
+function fetch_next_word() {
+    if (words_for_turn.length > 0) {
+        get_word().text(words_for_turn.shift());
+    } else {
+        stopTimer();
+        if (turn_active) {
+            turn_active = false;
+            hatgame_end_turn();
+        }
+    }
+}
 /**
  * Receive first word, and start timer countdown.
  * Sets callback on timeout, to clean up UI and send turn results to server
  */
 function hatgame_start_turn() {
-    log('Start my turn');
-    activateTimer($('#turn_timer'));
+    log('Start my turn');    
+    turn_active = true;
+    activateTimer(state_turn_time_sec);
     setTimeout(function() {    
         stopTimer();
+        if (turn_active) {        
+            turn_active = false;
+            hatgame_end_turn();
+        }
     }, state_turn_time_sec * 1000);
+    get_turn_me_pre().hide();
+    get_turn_me_active().show();
+    fetch_next_word();
 }
 
 function hatgame_next_word() {
-
+    var cur_word = get_word().text();
+    words_done += [cur_word];
+    log(words_done);
+    $('#done_words_holder').append(' <span class="word_tile">' + cur_word + '</span>');
+    fetch_next_word();
+    /* save current word to done */
+    /* display next word */
 }
 
 function hatgame_end_turn() {
     /* send turn results */
-    state_checking_turn = true;
+    get_turn_me_active().hide();
+    var gameend = false;
+    if (gameend) {
+        enter_gameend();
+    } else {
+        setTimeout(function () {
+            enter_turn_other();
+        }, const_cooloff_after_turn);
+    }
 }
+
+function enter_gameend() {
+    set_ui_layout(const_ui_state_endgame);
+}
+
 /* UI configs */
 function set_ui_state_pre_room() {
     log('set pre_room layout');    
-    $('#room_find').addClass('leftfloat').show();
+    $('#room_find').addClass('leftfloat ribbed-grayLight').show();
     $('#room_create_enter').addClass('maintab').show();
     $('#room_info').hide();
     $('#room_inroom').hide();
@@ -216,6 +387,8 @@ function set_ui_state_turn_me() {
     $('#game_turn').show();
     $('#hatgame_turn_other').hide();
     $('#hatgame_turn_me').addClass('maintab').show();
+    get_turn_me_pre().show();
+    get_turn_me_active().hide();
     $('#game_aftermath').hide();
 }
 function set_ui_state_endgame() {
@@ -229,7 +402,7 @@ function set_ui_state_endgame() {
     $('#game_aftermath').addClass('maintab').show();
 }
 
-function setUIlayout(layout) {
+function set_ui_layout(layout) {
     log('set layout to ' + layout);
     switch (layout) {
         case const_ui_state_pre_room:
@@ -255,9 +428,15 @@ function setUIlayout(layout) {
     }
 }
 
+function reset() {
+    set_ui_layout(const_ui_state_pre_room);
+}
+
 function init() {
+    //var startingLayout = const_ui_state_word_gen;
     var startingLayout = const_ui_state_pre_room;
-    setUIlayout(startingLayout);
+    set_ui_layout(startingLayout);
+    $('#infobox').hide();
 }
 
 $(document).ready(function () {

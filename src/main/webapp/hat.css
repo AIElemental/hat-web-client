@@ -1,26 +1,85 @@
+/* color-scheme
+#62A678 - rich grean
+#C9FFDB - light green
+#A7F2C0 - wall green
+#A62320 - bloody red
+#F2A9A7 - pink
+*/
 .hidden_div {
     display: none;
-}
-span.player {
-    display:block;
-}
-span.room {
-    display:inline;
 }
 #page {
     margin-left: 200px;
 }
+#room_select{
+    width: 150px;
+}
+.ui_player_name{
+    display: block;
+    font-size: 150%;
+    font-style: italic;
+}
 .maintab {
     float: right;
     width: 100%;
-    background-color: #F0F0F0;
+    background-color: #DFFFF0;    
+    border-style: none none none dotted;
+    border-color: #C0C0C0;
 }
 .leftfloat{
     float: left;
     width: 200px;
     margin-left: -200px;
-    background-color: #CCCCCC;
+    background-color: #B9DFE0;
 }
-.hidden {
-    display: none;
+.tab_title{
+    font-size: 150%;
+    text-decoration: none;
+    display: block;
+}
+.text_input_label{
+    font-size: 150%;
+    text-decoration: none;
+}
+.text_input{
+    font-size: 150%;
+    text-decoration: none;
+}
+.button{
+    background-color: #62A678;
+    border-style: solid;
+    border-color: #C9FFDB #62A678;
+    color: white;
+    padding: 10px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+}
+.button:hover{
+    border-color: #0F0F0F #62A678;
+}
+#infobox{
+    background-color: #A62320;
+    border-style: solid;
+    border-color: #0F0F0F #0F0F0F;
+    color: white;
+    padding: 10px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 150%;
+}
+#infobox:hover{
+    border-color: #F2A9A7 #F2A9A7;
+}
+.word_tile{
+    background-color: #EDEBE0;
+    border-style: none;
+    color: black;
+    padding: 16px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 200%;;
 }

@@ -1,44 +1,65 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">    
+    <meta charset="utf-8">
     <!--
     <meta http-equiv="refresh" content="15; url=hat.html"/>
     -->
     <title>Hat game client</title>
-    <link rel="stylesheet" type="text/css" href="hat.css">
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" type="text/css" href="hat.css">    
+    <script src="jquery-1.10.2.js"></script>
+    <script src="hat-elements.js"></script>
+    <script src="hat-requests.js"></script>
     <script src="hat.js"></script>
 </head>
 <body>
+     <nav style="display:none">
+        <a href="javascript: set_ui_layout(const_ui_state_pre_room);">const_ui_state_pre_room</a> |
+        <a href="javascript: set_ui_layout(const_ui_state_in_room);">const_ui_state_in_room</a> |
+        <a href="javascript: set_ui_layout(const_ui_state_word_gen);">const_ui_state_word_gen</a> |
+        <a href="javascript: set_ui_layout(const_ui_state_turn_other);">const_ui_state_turn_other</a> |
+        <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
+        <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
+    </nav>
     <div id="page">
-    <div id="infobox" class="infobox"></div>    
+    <button id="infobox" onclick='$("#infobox").hide()'></button>    
     <div id="room_create_enter" class="pre-room">
-        <div>Create\Enter Room</div>
-        <label for="room_name">Room name</label>
-        <input type="text" id="room_name" placeholder="Enter room name"/>
+        <span class="tab_title">Create\Enter Room</span>
+        <div class="input-control modern text">
+            <input type="text" id="room_name"/>
+            <span class="label">Room name</span>
+        </div>
+        <div class="input-control modern text">
+            <input type="text" id="room_pass"/>
+            <span class="label">Room password</span>
+        </div>
         <br>
-        <label for="room_pass">Room password</label>
-        <input type="text" id="room_pass" placeholder="Enter room pass"/>
+        <div class="input-control modern text">
+            <input type="text" id="player_name"/>
+            <span class="label">Your name</span>
+        </div>
         <br>
-        <label for="player_name">Your name</label>
-        <input type="text" id="player_name" placeholder="Enter your name"/>
+        <div class="input-control modern text">
+            <input type="text" id="hatgame_word_per_player" value="25"/>
+            <span class="label">Words per player</span>
+        </div>
+        <div class="input-control modern text">
+            <input type="text" id="hatgame_seconds_per_turn"value="25"/>
+            <span class="label">Second per turn</span>
+        </div>
         <br>
-        <label for="hatgame_word_per_player">Words per player</label>
-        <input type="text" id="hatgame_word_per_player" placeholder="Enter a number 10..50" value="25"/>
-        <br>
-        <label for="hatgame_seconds_per_turn">Seconds per turn</label>
-        <input type="text" id="hatgame_seconds_per_turn" placeholder="Enter a number 10..40" value="25"/>
-        <br>
-        <input type="button" onclick="room_create()" value="Create room"/>
-        <input type="button" onclick="room_enter()" value="Enter room"/>
+        <button id="btn-room-create" class="button primary" onclick="room_create($('#room_name').val(), $('#room_pass').val(), $('#player_name').val(), $('#hatgame_word_per_player').val(), $('#hatgame_seconds_per_turn').val())">Create room</button>
+        <button id="btn-room-enter" class="button primary" onclick="room_try_enter($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Enter room</button>
     </div>
     <div id="room_find" class="pre-room">
-        <div>Find Room</div>
-        <select id="room_select" size="5">
-            <option value="blank">No rooms found</option>
-        </select>
+        <span class="tab_title">Find Room</span>
+        <div class="input-control select">
+            <select id="room_select" size="5">
+                <option value="blank">No rooms found</option>
+            </select>
+        </div>
         <br>
-        <input type="button" onclick="room_find()" value="Reload rooms"/>
+        <button id="btn-reload-rooms" class="button primary" onclick="room_find()">Reload rooms</button>
     </div>
     <script>
     $( "#room_select" )
@@ -52,54 +73,49 @@
       .change();
     </script>
     <div id="room_info">
-        <div>Current room <span class="room_name">Testroomname</span></div>
+        <span class="tab_title">Current room: <span id="ui_room_name" class="room_name">N/A</span></span>
         <div id="players_list"></div>
-        <input type="button" onclick="room_reload_players($('#players_list'))" value="Reload room players"/>
+        <!--
+        <button class="button" onclick="room_reload_players($('#players_list'))">Reload room players</button>
+        -->
     </div>
     <div id="room_inroom">
-        <div>Game start</div>
-        <input type="button" onclick="hatgame_start_new_game()" value="Start new game"/>
-        <br>
-        <div>Game check</div>
-        <input type="button" onclick="hatgame_check_active_game()" value="Check game"/>
+        <span class="tab_title">Game start</span>
+        <button class="button" onclick="hatgame_start_new_game()">Start new game</button>
     </div>
     <div id="game_word_enter">
-        <div>Word Gen</div>
-        <textarea id='word_enter' type="textarea" cols="40" rows="20" placeholder="Enter words here, one per line"></textarea>
+        <span class="tab_title">Word Generation</span>
+        <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>
         <br>
-        <input type="button" onclick="hatgame_submit_words($('#word_enter'))" value="Submit words"/>
+        <button class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words</button>
     </div>
     <div id="game_turn">
         <div id="hatgame_turn_other">
-            <div>Game - Others turn</div>
-            <input type="text" id="state_turn_player" value="turn player"/>
-            <input type="button" onclick="hatgame_check_my_turn()" value="Check my turn yet"/>
+            <span class="tab_title">Game - Others turn</span>
+            <div class="playersSchema">
+                <span class="ui_player_tile">Test Player 1</span>
+            </div>
         </div>
         <div id="hatgame_turn_me">
-            <div>Game - My turn</div>
-            <span id="turn_timer">time</span>
+            <span class="tab_title">Game - My turn</span>
+            <span id="turn_timer" class="ui_player_name">time</span>
+            <div id="hatgame_turn_me_pre">
+                <button class="button" onclick="hatgame_start_turn()">Start turn</button>
+            </div>
+            <div id="hatgame_turn_me_active">
+                <span class="tab_title">Current word: </span><span id="word" class="word_tile"></span>
+                <br>
+                <button class="button" onclick="hatgame_next_word()">Word done</button>
+            </div>
             <br>
-            <input type="button" onclick="hatgame_start_turn()" value="Start turn"/>
-            <br>            
-            Current word: <span id="word">ABRAKADARBA</span>
-            <br>
-            <input type="button" onclick="hatgame_next_word()" value="Word done"/>
-            <br>
-            <input type="button" onclick="hatgame_end_turn()" value="Send end turn"/>
-            <br>
-            <input type="text" id="done_words" placeholder="Done words"/>
-            <br>
-            <input type="button" onclick="hatgame_end_turn()" value="Send end turn"/>
+            <span class="tab_title">Done words: </span><span id="done_words_holder"></span>
         </div>
     </div>
     <div id="game_aftermath">
-        <div>The game has ended.</div>
+        <span class="tab_title">The game has ended.</span>
+        <button class="button" onclick="reset()">Find new round</button>
     </div>
     <div id="log_container">
-        <!--
-        <input type="button" onclick="$('#log').toggle();"
-        value="Toggle log"/>
-        -->
         <div id="log" style="display:none">
             <div>Log:</div>
         </div>
@@ -109,8 +125,18 @@
             if (e.which == 120) {
                 $("#log").toggle();
             }
+            if (e.which == 119) {
+                $("nav").toggle();
+            }
+            if (e.which == 119) {
+                $("#backend-holder").toggle();
+            }
         });
     </script>
+    <div id="backend-holder" class="leftfloat" style="display:none">
+        <input type="text" id="backend" value=""/>
+        <button onclick="set_backend($('#backend').val())">save</button>
+    </div>    
     </div>
 </body>
 </html>
