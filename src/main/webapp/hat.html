@@ -1,0 +1,60 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hat game client</title>
+    <link rel="stylesheet" type="text/css" href="hat.css">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="hat.js"></script>
+</head>
+<body>
+    <div>
+        <div>Create\Enter Room</div>
+        <input type="text" id="room_name" placeholder="Enter room name"/>
+        <br>
+        <input type="text" id="room_pass" placeholder="Enter room pass"/>
+        <br>
+        <input type="text" id="player_name" placeholder="Enter your name"/>
+        <br>
+        <input type="button" onclick="room_create()" value="Create room"/>
+        <input type="button" onclick="room_enter()" value="Enter room"/>
+    </div>
+    <div>
+        <div>Find Room</div>
+        <select id="room_select" size="5">
+            <option value="blank">No rooms found</option>
+        </select>
+        <br>
+        <input type="button" onclick="room_find()" value="Reload rooms"/>
+    </div>
+    <script>
+    $( "#room_select" )
+      .change(function () {
+        var str = "";
+        $( "#room_select option:selected" ).each(function() {
+          str = $( this ).text();
+        });
+        $( "#room_name" ).val( str );
+      })
+      .change();
+    </script>
+    <div>
+        <div>Game start</div>
+        <label for="hatgame_word_per_player">Words per player</label>
+        <input type="text" id="hatgame_word_per_player" placeholder="Enter a number 10..50" value="25"/>
+        <br>
+        <label for="hatgame_seconds_per_turn">Seconds per turn</label>
+        <input type="text" id="hatgame_seconds_per_turn" placeholder="Enter a number 10..40" value="25"/>
+        <br>
+        <input type="button" onclick="hatgame_start_new_game()" value="Start new game"/>            
+    </div>
+    <div>
+        <div>Word Gen</div>        
+    </div>
+    <div>
+        <div>Game</div>
+    </div>
+    <div id="log">    
+        <div>Log:</div>
+    </div>
+</body>
+</html>
