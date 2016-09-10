@@ -1,3 +1,4 @@
+
 function request_create_room(room_name, room_pass, player_name, words, turn_time, callback, errorCb){
 var data = '{\
 "action": "create_room",\

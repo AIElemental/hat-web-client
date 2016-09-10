@@ -117,7 +117,7 @@ function room_enter(room_name, room_pass, player_name, word_per_player, seconds_
 
 function room_create(room_name, room_pass, player_name, words_pers, sec_turn) {
     log('Create room' + room_name + ' ' + room_pass + ' ' + player_name + ' ' + words_pers + ' ' + sec_turn);
-    request_create_room(room_name, room_pass, player_name, words_pers, sec_turn, function (result) {
+    ws_request_create_room(room_name, room_pass, player_name, words_pers, sec_turn, function (result) {
         room_enter(room_name, room_pass, player_name, words_pers, sec_turn);
     }, function (result) {
         post_message('Failed to create room. continuing anyway');
@@ -437,6 +437,8 @@ function init() {
     var startingLayout = const_ui_state_pre_room;
     set_ui_layout(startingLayout);
     $('#infobox').hide();
+    backend = $('#backend').val();
+    connect();
 }
 
 $(document).ready(function () {
