@@ -72,31 +72,37 @@ function post_message(message) {
 function set_player_name(player_name) {
     /* TODO: save into cookie */
     state_player_name = player_name;
+    Cookies.set('ht_player_name', player_name, {expires: 7});
 }
 
 function set_room_name(room_name) {
     /* TODO: save room into cookie */
     state_room_name = room_name;
     $('#ui_room_name').text(room_name);
+    Cookies.set('ht_room_name', room_name, {expires: 7});
 }
 
 function set_room_password(room_pass) {
     /* TODO: save room into cookie */
+    Cookies.set('ht_room_pass', room_pass, {expires: 7});
 }
 
 function set_words_per_player(words) {
     /* TODO: save room into cookie */
     state_words_per_player = words;
+    Cookies.set('ht_wpp', words, {expires: 7});
 }
 
 function set_turn_time_sec(secs) {
     /* TODO: save room into cookie */
     state_turn_time_sec = secs;
+    Cookies.set('ht_tts', secs, {expires: 7});
 }
 
 function set_backend(url_string) {
     log('backend at ' + url_string);
     backend = url_string;
+    Cookies.set('ht_wsbe', url_string, {expires: 7});
 }
 
 /* Room management functions */
@@ -117,6 +123,14 @@ function room_enter(room_name, room_pass, player_name, word_per_player, seconds_
 
 function room_create(room_name, room_pass, player_name, words_pers, sec_turn) {
     log('Create room' + room_name + ' ' + room_pass + ' ' + player_name + ' ' + words_pers + ' ' + sec_turn);
+    
+    //store for usability
+    set_room_name(room_name);
+    set_room_password(room_pass);
+    set_player_name(player_name);
+    set_words_per_player(words_pers);
+    set_turn_time_sec(sec_turn);
+    
     ws_request_create_room(room_name, room_pass, player_name, words_pers, sec_turn, function (result) {
         room_enter(room_name, room_pass, player_name, words_pers, sec_turn);
     }, function (result) {
@@ -344,6 +358,12 @@ function set_ui_state_pre_room() {
     $('#game_word_enter').hide();
     $('#game_turn').hide();
     $('#game_aftermath').hide();
+    
+    $('#room_name').val(Cookies.get('ht_room_name'));
+    $('#room_pass').val(Cookies.get('ht_room_pass'));
+    $('#player_name').val(Cookies.get('ht_player_name'));
+    $('#hatgame_word_per_player').val(Cookies.get('ht_wpp'));
+    $('#hatgame_seconds_per_turn').val(Cookies.get('ht_tts'));
 }
 function set_ui_state_in_room() {
     log('set in_room layout');
@@ -437,7 +457,18 @@ function init() {
     var startingLayout = const_ui_state_pre_room;
     set_ui_layout(startingLayout);
     $('#infobox').hide();
+    
+    set_player_name(Cookies.get('ht_player_name'));
+    set_room_name(Cookies.get('ht_room_name'));
+    set_room_password(Cookies.get('ht_room_pass'));
+    set_words_per_player(Cookies.get('ht_wpp'));
+    set_turn_time_sec(Cookies.get('ht_tts'));
+    
     backend = $('#backend').val();
+    if (!backend || backend === '') {
+        set_backend(Cookies.get('ht_wsbe'));
+        $('#backend').val(backend);
+    }
     connect();
 }
 

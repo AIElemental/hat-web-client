@@ -8,6 +8,7 @@
     <title>Hat game client</title>
     <link rel="stylesheet" type="text/css" href="hat.css"/>
     <script src="jquery-1.10.2.js"></script>
+    <script src="js.cookie-2.1.3.js"></script>
     <script src="hat-elements.js"></script>
     <script src="hat-requests.js"></script>
     <script src="hat-ws.js"></script>
@@ -51,6 +52,9 @@
         <br>
         <button id="btn-room-create" class="button primary" onclick="room_create($('#room_name').val(), $('#room_pass').val(), $('#player_name').val(), $('#hatgame_word_per_player').val(), $('#hatgame_seconds_per_turn').val())">Create room</button>
         <button id="btn-room-enter" class="button primary" onclick="room_try_enter($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Enter room</button>
+        <!--
+        <button id="btn-ws-test" class="button" onclick="socket_test()">Test Socket</button>
+        -->
     </div>
     <div id="room_find" class="pre-room">
         <span class="tab_title">Find Room</span>
