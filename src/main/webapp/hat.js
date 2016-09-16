@@ -5,11 +5,14 @@ var const_cooloff_after_turn = 2000;
 
 /* State vars */
 var backend = '';
+
 var state_room_name = '';
+var state_room_pass = '';
 var state_words_per_player = 20;
 var state_turn_time_sec = 20;
 var state_player_name = '';
 var state_turn_name = '';
+
 var turn_active = false;
 var state_checking_turn = false;
 var words_done = [];
@@ -76,25 +79,22 @@ function set_player_name(player_name) {
 }
 
 function set_room_name(room_name) {
-    /* TODO: save room into cookie */
     state_room_name = room_name;
     $('#ui_room_name').text(room_name);
     Cookies.set('ht_room_name', room_name, {expires: 7});
 }
 
 function set_room_password(room_pass) {
-    /* TODO: save room into cookie */
+    state_room_pass = room_pass;
     Cookies.set('ht_room_pass', room_pass, {expires: 7});
 }
 
 function set_words_per_player(words) {
-    /* TODO: save room into cookie */
     state_words_per_player = words;
     Cookies.set('ht_wpp', words, {expires: 7});
 }
 
 function set_turn_time_sec(secs) {
-    /* TODO: save room into cookie */
     state_turn_time_sec = secs;
     Cookies.set('ht_tts', secs, {expires: 7});
 }
@@ -170,7 +170,7 @@ function room_find() {
 
 function room_try_enter(room_name, room_pass, player_name) {
     log('Trying to enter room_name=' + room_name + ' room_pass=' + room_pass + ' player_name=' + player_name);  
-    
+    ws_request_enter_room(room_name, room_pass, player_name, "-1", "-1");
     var entered = true;
     var word_per_player = 99;
     var seconds_per_turn = 66;
@@ -180,6 +180,38 @@ function room_try_enter(room_name, room_pass, player_name) {
         post_message('Failed to enter room' + room_name);
     }
     return;
+}
+
+function room_set_players(jquery_div_container, players) {
+    var players_html = '';
+    for (var i = 0; i < players.length; ++i) {
+        players_html += '<span class="ui_player_name">' + players[i] + '</span>';
+    }    
+    jquery_div_container.html(players_html);
+}
+
+function room_set_players_words_pending(jquery_div_container, players, players_pending) {
+    for (var i = 0; i < players.length; ++i) {
+        var playerTag = players[i];
+        if (players_pending.indexOf(players[i]) > -1) {
+            playerTag += " (...)";
+        } else {
+            playerTag += " (Ready)";
+        }
+        players[i] = playerTag;
+    }    
+    room_set_players(jquery_div_container, players);
+}
+
+function room_set_players_turn(jquery_div_container, players, turn_player, scores) {
+    for (var i = 0; i < players.length; ++i) {
+        var playerTag = players[i] + ' ' + scores[i] + ' words ';
+        if (playerTag === turn_player) {
+            playerTag += " (Turn)";
+        }
+        players[i] = playerTag;
+    }    
+    room_set_players(jquery_div_container, players);
 }
 
 function request_room_players() {
@@ -197,6 +229,7 @@ function room_reload_players(jquery_div_container) {
 
 var playerReloaderId;
 function playerReloaderOn() {
+    if (true) return; /* disabled */
     room_reload_players($('#players_list'));
     log('Player reloader on');
     playerReloaderId = setInterval(function () {
@@ -219,6 +252,8 @@ function enter_new_game() {
 
 function hatgame_start_new_game(room_name, word_per_player, seconds_per_turn) {
     log('hatgame_start_new_game(room_name='+room_name+', word_per_player='+word_per_player+', seconds_per_turn='+seconds_per_turn+')');
+    ws_request_start_game(state_room_name, state_room_pass, state_player_name);
+    if (true) return;
     var success = true;
     if (success) {
         enter_new_game();
@@ -242,6 +277,23 @@ function hatgame_check_new_game_schedule() {
 /* Word generation functions */
 function hatgame_submit_words(jqueryElement) {
     log(jqueryElement.val());
+    var linesRaw = jqueryElement.val().split("\n");
+    var lines = [];
+    for (var i = 0; i < linesRaw.length; ++i) {
+        var line = linesRaw[i].trim();
+        if (line != undefined && line.length > 0) {
+            lines.push(line);
+        }
+    }    
+    if (lines.length != state_words_per_player) {
+        post_message("Please enter " + state_words_per_player + " words. You currently have " + lines.length + " words.");
+        return;
+    }
+    for (var i = 0; i < lines.length; ++i) {
+        lines[i] = lines[i].trim();
+    }
+    ws_request_commit_words(state_room_name, state_room_pass, state_player_name, words);
+    if (true) return;
     var success = true;
     if (success) {
         enter_turn_stage();
@@ -347,6 +399,47 @@ function hatgame_end_turn() {
 function enter_gameend() {
     set_ui_layout(const_ui_state_endgame);
 }
+
+function handle_ws_in_room(data) {
+    var json = JSON.parse(data);    
+    var room_name = json["room_name"];
+    var state = json["state"];
+    if (state === "in_room") {
+        var players = json["data"]["players"];
+        room_set_players($('#players_list'), players);        
+    }
+}
+
+function handle_ws_word_generation(data) {
+    var json = JSON.parse(data);    
+    var room_name = json["room_name"];
+    var state = json["state"];
+    if (state === "word_generation") {
+        var players = json["data"]["players"];
+        var words_players = json["data"]["words_pending_from"];
+        room_set_players_words_pending($('#players_list'), players, words_players);
+        
+        enter_new_game();
+    }
+}
+
+function handle_ws_hatgame(data) {
+    var json = JSON.parse(data);
+    var room_name = json["room_name"];
+    var state = json["state"];
+    if (state === "hatgame") {
+        var players = json["data"]["players"];
+        var turn_player = json["data"]["turn_player"];
+        var scores = json["data"]["scores"];
+        var words_remaining = json["data"]["words_remaining"];
+        room_set_players_turn($('#players_list'), players, turn_player, scores);
+        room_set_players_situp($('#???'), json["data"]["situp"]);
+        
+        var state_turn_name = turn_player;
+        enter_turn_stage();
+    }
+}
+
 
 /* UI configs */
 function set_ui_state_pre_room() {
@@ -469,6 +562,9 @@ function init() {
         set_backend(Cookies.get('ht_wsbe'));
         $('#backend').val(backend);
     }
+    
+    ws_add_handler(handle_ws_in_room);
+    ws_add_handler(handle_ws_word_generation);
     connect();
 }
 

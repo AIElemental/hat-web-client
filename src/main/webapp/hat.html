@@ -129,6 +129,11 @@
         $(window).on('keydown', function(e) {
             if (e.which == 120) {
                 $("#log").toggle();
+                if (Cookies.get('ht_dev_show_log') === 'true') {
+                    Cookies.set('ht_dev_show_log', 'false', {expires: 7});
+                } else {
+                    Cookies.set('ht_dev_show_log', 'true', {expires: 7});
+                }
             }
             if (e.which == 119) {
                 $("nav").toggle();
@@ -137,6 +142,9 @@
                 $("#backend-holder").toggle();
             }
         });
+        if (Cookies.get('ht_dev_show_log') === 'true') {
+            $("#log").show();
+        };
     </script>
     <div id="backend-holder" class="leftfloat" style="display:none">
         <input type="text" id="backend" value=""/>

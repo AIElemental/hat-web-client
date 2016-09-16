@@ -5,7 +5,7 @@ var onMessageHandlers = [];
 function connect(){
     try {        
         var host = backend;
-        if (!host || host === '') {
+        if (!host || host === '' || host === 'undefined') {
             host = 'ws://46.101.133.65:8888/ws';
         }
         log('Connecting to web socket at ' + host);
@@ -21,7 +21,7 @@ function connect(){
         socket.onmessage = function(msg){
             log('Received: '+msg.data);
             for (var i = 0; i < onMessageHandlers.length; i++) {
-                onMessageHandlers[i]();
+                onMessageHandlers[i](msg.data);
             }
         }
 
@@ -48,7 +48,9 @@ function ws_send(json_data, tries) {
     }
     var wsocket = getSocket();
     if (wsocket.readyState == 1) {
-        wsocket.send(JSON.stringify(json_data));
+        var json_str = JSON.stringify(json_data);
+        wsocket.send(json_str);
+        log("Sent " + json_str);
     } else {
         setTimeout(function () {
             ws_send(json_data, tries);
@@ -69,20 +71,53 @@ function ws_add_handler(func) {
     onMessageHandlers.push(func);
 }
 
-function ws_request_create_room(room_name, room_pass, player_name, words, turn_time, callback, errorCb){    
-    var data = '{\
-"action": "create_room",\
-"data":{\
-    "room_name":"'+room_name+'",\
-    "room_pass":"'+room_pass+'",\
-    "player_name":"'+player_name+'",\
-    "word_count":'+words+',\
-    "turn_time":'+turn_time+'\
-}\
-';
-    log(data);
-    getSocket().send(data);
+function ws_request_create_room(room_name, room_pass, player_name, words, turn_time){
+    var data = 
+    {    
+    "player_name":player_name,
+    "action": "enter_room",
+    "data":{
+        "room_name":room_name,
+        "room_pass":room_pass,        
+        "words":parseInt(words),
+        "turn_time":parseInt(turn_time)
+        }
+    };
+    ws_send(data);
 }
+
+function ws_request_enter_room(room_name, room_pass, player_name, words, turn_time){
+    ws_request_create_room(room_name, room_pass, player_name, words, turn_time);
+}
+
+function ws_request_start_game(room_name, room_pass, player_name){
+    var data = 
+    {    
+    "player_name":player_name,
+    "action": "start_game",
+    "data":{
+        "room_name":room_name,
+        "room_pass":room_pass
+        }
+    };
+    ws_send(data);
+}
+
+
+function ws_request_commit_words(room_name, room_pass, player_name, words){
+    var data = 
+    {    
+    "player_name":player_name,
+    "action": "commit_words",
+    "data":{
+        "room_name":room_name,
+        "room_pass":room_pass,        
+        "words":words
+        }
+    };
+    ws_send(data);
+}
+
 
 function socket_test() {
     var socket;
@@ -112,3 +147,4 @@ function socket_test() {
     socket.send('["test"]');
     log('Test Socket Status: ' + socket.readyState);
 }
+
