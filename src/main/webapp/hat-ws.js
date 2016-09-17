@@ -37,10 +37,10 @@ function connect(){
 }
 
 function ws_send(json_data) {
-    ws_send(json_data, 2);
+    ws_send_tries(json_data, 2);
 }
 
-function ws_send(json_data, tries) {
+function ws_send_tries(json_data, tries) {
     tries--;
     if (tries < 0) {
         log('Failed to send ' + json_data + '. Socket not ready');
@@ -53,7 +53,7 @@ function ws_send(json_data, tries) {
         log("Sent " + json_str);
     } else {
         setTimeout(function () {
-            ws_send(json_data, tries);
+            ws_send_tries(json_data, tries);
         }, 500);
     }
 }
