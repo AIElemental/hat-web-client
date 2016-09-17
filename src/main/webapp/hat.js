@@ -91,20 +91,21 @@ function post_message(message) {
 
 /* State change functions */
 function set_state(state) {
-    /* TODO: save into cookie */
+    log("state_state: " + state_state + "->" + state);
     state_state = state;
     Cookies.set('ht_state', state, {expires: 7});
     debug_state();
 }
 
 function set_player_name(player_name) {
-    /* TODO: save into cookie */
+    log("state_player_name: " + state_player_name + "->" + player_name);
     state_player_name = player_name;
     Cookies.set('ht_player_name', player_name, {expires: 7});
     debug_state();
 }
 
 function set_room_name(room_name) {
+    log("state_room_name: " + state_room_name + "->" + room_name);
     state_room_name = room_name;
     $('#ui_room_name').text(state_room_name + ' wpp:' + state_words_per_player + ' spt' + state_turn_time_sec);
     Cookies.set('ht_room_name', room_name, {expires: 7});
@@ -112,24 +113,28 @@ function set_room_name(room_name) {
 }
 
 function set_room_password(room_pass) {
+    log("state_room_pass: " + state_room_pass + "->" + room_pass);
     state_room_pass = room_pass;
     Cookies.set('ht_room_pass', room_pass, {expires: 7});
     debug_state();
 }
 
 function set_words_per_player(words) {
+    log("state_words_per_player: " + state_words_per_player + "->" + words);
     state_words_per_player = words;
     Cookies.set('ht_wpp', words, {expires: 7});
     debug_state();
 }
 
 function set_turn_time_sec(secs) {
+    log("state_turn_time_sec: " + state_turn_time_sec + "->" + secs);
     state_turn_time_sec = secs;
     Cookies.set('ht_tts', secs, {expires: 7});
     debug_state();
 }
 
 function set_turn_name(turn_name) {
+    log("state_turn_name: " + state_turn_name + "->" + turn_name);
     state_turn_name = turn_name;
     Cookies.set('ht_tplayer', state_turn_name, {expires: 7});
     debug_state();
@@ -166,7 +171,6 @@ function room_create(room_name, room_pass, player_name, words_pers, sec_turn) {
     set_turn_time_sec(sec_turn);
     
     ws_request_create_room(room_name, room_pass, player_name, words_pers, sec_turn);
-    return;
 }
 
 function room_find() {
@@ -183,11 +187,12 @@ function set_found_rooms(room_names) {
             option += '<option value="'+ room_names[i] + '">' + room_names[i] + '</option>';
         }
     }
-    $('#room_select').html(option);    
+    var room_select = $('#room_select');
+    room_select.html(option);
     if (room_names.length > 0) {
-        $('#room_select').val(room_names[0]);
+        room_select.val(room_names[0]);
     }
-    $('#room_select').change();
+    room_select.change();
 }
 
 function room_try_enter(room_name, room_pass, player_name, words_per_player, turn_time_sec) {
@@ -260,20 +265,6 @@ function room_reload_players(jquery_div_container) {
         players_html += '<span class="ui_player_name">' + players[i] + '</span>';
     }    
     jquery_div_container.html(players_html);
-}
-
-var playerReloaderId;
-function playerReloaderOn() {
-    if (true) return; /* disabled */
-    room_reload_players($('#players_list'));
-    log('Player reloader on');
-    playerReloaderId = setInterval(function () {
-        room_reload_players($('#players_list'));
-    }, const_game_ping);
-}
-function playerReloaderOff() {
-    log('Player reloader off');
-    clearInterval(playerReloaderId);
 }
 
 /* Game functions */
@@ -381,8 +372,14 @@ function start_screen() {
 }
 
 
-function no_room_to_in_room(data) {    
+function no_room_to_in_room() {
     room_enter(state_room_name, state_room_pass, state_player_name, state_words_per_player, state_turn_time_sec);
+}
+function no_room_to_word_generation() {
+    enter_new_game();
+}
+function no_room_to_hatgame() {
+    enter_turn_stage();
 }
 function in_room_to_in_room() {
     //player list is updated by itself
@@ -408,7 +405,9 @@ function endgame_to_no_room() {
 
 var transitions = {
     "no_room" : {
-        "in_room" : no_room_to_in_room
+        "in_room" : no_room_to_in_room,
+        "word_generation" : no_room_to_word_generation,
+        "hatgame" : no_room_to_hatgame
     },
     "in_room" : {
         "in_room" : in_room_to_in_room,
@@ -431,21 +430,26 @@ function transitionTo(state) {
     if (possible_transitions != undefined) {
         var transition_func = possible_transitions[state];
         if (transition_func != undefined) {
+            log("Found transition " + state_state + "->" + state);
             set_state(state);
-            transition_func();            
+            transition_func();
+            return;
         }
     }
+    log("No transition " + state_state + "->" + state);
 }
 
 function handle_ws_rooms(data) {
     var json = JSON.parse(data);
     if (json["action"] === "room_list") {
+        log('handle_ws_rooms');
         var room_info = json["data"];
         var room_names = [];
         $.each(room_info, function(room_name, room_info) {
             room_names.push(room_name);
         });
         set_found_rooms(room_names);
+        debug_state();
     }
 }
 
@@ -454,6 +458,7 @@ function handle_ws_in_room(data) {
     var room_name = json["room_name"];
     var state = json["state"];
     if (state === "in_room") {
+        log('handle_ws_in_room');
         var players = json["data"]["players"];
         room_set_players($('#players_list'), players);
         
@@ -461,7 +466,8 @@ function handle_ws_in_room(data) {
         set_words_per_player(json["data"]["words"]);
         set_turn_time_sec(json["data"]["turn_time"]);
         
-        transitionTo(state);        
+        transitionTo(state);
+        debug_state();
     }    
 }
 
@@ -470,11 +476,13 @@ function handle_ws_word_generation(data) {
     var room_name = json["room_name"];
     var state = json["state"];
     if (state === "word_generation") {
+        log('handle_ws_word_generation');
         var players = json["data"]["players"];
         var words_players = json["data"]["words_pending_from"];
         room_set_players_words_pending($('#players_list'), players, words_players);
         
         transitionTo(state);
+        debug_state();
     }
 }
 
@@ -483,6 +491,7 @@ function handle_ws_hatgame(data) {
     var room_name = json["room_name"];
     var state = json["state"];
     if (state === "hatgame") {
+        log('handle_ws_hatgame');
         var players = json["data"]["players"];
         var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
@@ -493,6 +502,7 @@ function handle_ws_hatgame(data) {
         set_turn_name(turn_player);
         
         transitionTo(state);
+        debug_state();
     }
 }
 
@@ -501,12 +511,14 @@ function handle_ws_endgame(data) {
     var room_name = json["room_name"];
     var state = json["state"];
     if (state === "endgame") {
+        log('handle_ws_endgame');
         var players = json["data"]["players"];
         var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
         room_set_players($('#players_list'), players);
         room_set_players_situp($('#situp'), json["data"]["situp"]);        
         transitionTo(state);
+        debug_state();
     }
 }
 
@@ -620,7 +632,7 @@ function init() {
     set_ui_layout(startingLayout);
     $('#infobox').hide();
     
-    set_state(get_or_default(Cookies.get('ht_state'), 'no_room'));
+    set_state('no_room');
     set_room_name(get_or_default(Cookies.get('ht_room_name'), 'hatroom'));
     set_room_password(get_or_default(Cookies.get('ht_room_pass'), 'hatpass'));
     set_words_per_player(get_or_default(Cookies.get('ht_wpp'), '20'));

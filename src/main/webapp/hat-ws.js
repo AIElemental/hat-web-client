@@ -170,11 +170,11 @@ function socket_test() {
 
         socket.onopen = function(){
                 log('Test Socket Status: ' + socket.readyState+' (open)');
-        }
+        };
 
         socket.onmessage = function(msg){
                 log('Test Received: '+msg.data);
-        }
+        };
 
         socket.onclose = function(){
                 log('Test Socket Status: ' + socket.readyState+' (Closed)');
