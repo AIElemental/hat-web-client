@@ -2,8 +2,8 @@ var socket;
 var connected = false;
 var onMessageHandlers = [];
 
-function connect(){
-    try {        
+function connect() {
+    try {
         var host = backend;
         if (!host || host === '' || host === 'undefined') {
             host = 'ws://46.101.133.65:8888/ws';
@@ -13,26 +13,26 @@ function connect(){
 
         log('Socket Status: ' + socket.readyState);
 
-        socket.onopen = function(){
-            log('Socket Status: ' + socket.readyState+' (open)');
-                connected = true;
+        socket.onopen = function () {
+            log('Socket Status: ' + socket.readyState + ' (open)');
+            connected = true;
         };
 
-        socket.onmessage = function(msg){
-            log('Received: '+msg.data);
+        socket.onmessage = function (msg) {
+            log('Received: ' + msg.data);
             for (var i = 0; i < onMessageHandlers.length; i++) {
                 onMessageHandlers[i](msg.data);
             }
         };
 
-        socket.onclose = function(){
-            log('Socket Status: ' + socket.readyState+' (Closed)');
-                connected = false;
-        }            
+        socket.onclose = function () {
+            log('Socket Status: ' + socket.readyState + ' (Closed)');
+            connected = false;
+        }
 
-    } catch(exception){
-            log('Error ' + exception);
-            post_message('Socket connect error ' + exception);
+    } catch (exception) {
+        log('Error ' + exception);
+        post_message('Socket connect error ' + exception);
     }
 }
 
@@ -67,92 +67,98 @@ function getSocket() {
     }
 }
 
+function closeSocket() {
+    if (connected) {
+        socket.close();
+    }
+}
+
 function ws_add_handler(func) {
     onMessageHandlers.push(func);
 }
 
-function ws_request_get_room_list(player_name){
-    var data = 
+function ws_request_get_room_list(player_name) {
+    var data =
     {
-    "player_name":player_name,
-    "action":"get_room_list",
-    "data":{}
+        "player_name": player_name,
+        "action": "get_room_list",
+        "data": {}
     };
     ws_send(data);
 }
 
 
-function ws_request_create_room(room_name, room_pass, player_name, words, turn_time){
-    var data = 
-    {    
-    "player_name":player_name,
-    "action": "enter_room",
-    "data":{
-        "room_name":room_name,
-        "room_pass":room_pass,        
-        "words":parseInt(words),
-        "turn_time":parseInt(turn_time)
+function ws_request_create_room(room_name, room_pass, player_name, words, turn_time) {
+    var data =
+    {
+        "player_name": player_name,
+        "action": "enter_room",
+        "data": {
+            "room_name": room_name,
+            "room_pass": room_pass,
+            "words": parseInt(words),
+            "turn_time": parseInt(turn_time)
         }
     };
     ws_send(data);
 }
 
-function ws_request_enter_room(room_name, room_pass, player_name, words, turn_time){
+function ws_request_enter_room(room_name, room_pass, player_name, words, turn_time) {
     ws_request_create_room(room_name, room_pass, player_name, words, turn_time);
 }
 
-function ws_request_reconnect_room(room_name, room_pass, player_name, words, turn_time){
-    var data = 
-    {    
-    "player_name":player_name,
-    "action": "reconnect",
-    "data":{
-        "room_name":room_name,
-        "room_pass":room_pass,        
-        "words":parseInt(words),
-        "turn_time":parseInt(turn_time)
+function ws_request_reconnect_room(room_name, room_pass, player_name, words, turn_time) {
+    var data =
+    {
+        "player_name": player_name,
+        "action": "reconnect",
+        "data": {
+            "room_name": room_name,
+            "room_pass": room_pass,
+            "words": parseInt(words),
+            "turn_time": parseInt(turn_time)
         }
     };
     ws_send(data);
 }
 
-function ws_request_start_game(room_name, room_pass, player_name){
-    var data = 
-    {    
-    "player_name":player_name,
-    "action": "start_game",
-    "data":{
-        "room_name":room_name,
-        "room_pass":room_pass
+function ws_request_start_game(room_name, room_pass, player_name) {
+    var data =
+    {
+        "player_name": player_name,
+        "action": "start_game",
+        "data": {
+            "room_name": room_name,
+            "room_pass": room_pass
         }
     };
     ws_send(data);
 }
 
-function ws_request_commit_words(room_name, room_pass, player_name, words){
-    var data = 
-    {    
-    "player_name":player_name,
-    "action": "commit_words",
-    "data":{
-        "room_name":room_name,
-        "room_pass":room_pass,        
-        "words":words
+function ws_request_commit_words(room_name, room_pass, player_name, words) {
+    var data =
+    {
+        "player_name": player_name,
+        "action": "commit_words",
+        "data": {
+            "room_name": room_name,
+            "room_pass": room_pass,
+            "words": words
         }
     };
     ws_send(data);
 }
 
-function ws_request_commit_turn(room_name, room_pass, player_name, words, turn_num){
-    var data = 
-    {    
-    "player_name":player_name,
-    "action": "commit_turn",
-    "data":{
-        "room_name":room_name,
-        "room_pass":room_pass,        
-        "words":words,
-        "turn_num":turn_num
+function ws_request_commit_turn(room_name, room_pass, player_name, words, turn_num) {
+    var data =
+    {
+        "player_name": player_name,
+        "action": "commit_turn",
+        "data": {
+            "room_name": room_name,
+            "room_pass": room_pass,
+            "words": words,
+            "turn_num": turn_num
         }
     };
     ws_send(data);
@@ -161,30 +167,29 @@ function ws_request_commit_turn(room_name, room_pass, player_name, words, turn_n
 
 function socket_test() {
     var socket;
-    try {        
+    try {
         var host = 'ws://46.101.133.65:8888/ws/';
         log('Test Connecting to web socket at ' + host);
         socket = new WebSocket(host);
 
         log('Test Socket Status: ' + socket.readyState);
 
-        socket.onopen = function(){
-                log('Test Socket Status: ' + socket.readyState+' (open)');
+        socket.onopen = function () {
+            log('Test Socket Status: ' + socket.readyState + ' (open)');
         };
 
-        socket.onmessage = function(msg){
-                log('Test Received: '+msg.data);
+        socket.onmessage = function (msg) {
+            log('Test Received: ' + msg.data);
         };
 
-        socket.onclose = function(){
-                log('Test Socket Status: ' + socket.readyState+' (Closed)');
-        }            
+        socket.onclose = function () {
+            log('Test Socket Status: ' + socket.readyState + ' (Closed)');
+        }
 
-    } catch(exception){
-            log('Test Error ' + exception);
-            post_message('Test Socket connect error ' + exception);
+    } catch (exception) {
+        log('Test Error ' + exception);
+        post_message('Test Socket connect error ' + exception);
     }
     socket.send('["test"]');
     log('Test Socket Status: ' + socket.readyState);
 }
-

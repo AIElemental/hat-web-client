@@ -23,22 +23,38 @@
         <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
         <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
     </nav>
-    <div id="debug_state" style="display:none;"></div>
+    <div id="debug_state"></div>
+    <!--<div id="debug_state" style="display:none;"></div>-->
     <div id="page">
     <button id="infobox" onclick='$("#infobox").hide()'></button>
     <div id="room_create_enter" class="pre-room">
         <span class="tab_title">Create or Enter a Room</span>
         <div class="input-control modern text">
             <input type="text" id="room_name"/>
+            <script>
+                $('#room_name').change(function () {
+                    set_room_name($('#room_name').val());
+                });
+            </script>
             <span class="label">Room name</span>
         </div>
         <div class="input-control modern text">
             <input type="text" id="room_pass"/>
+            <script>
+                $('#room_pass').change(function () {
+                    set_room_password($('#room_pass').val());
+                });
+            </script>
             <span class="label">Room password</span>
         </div>
         <br>
         <div class="input-control modern text">
             <input type="text" id="player_name"/>
+            <script>
+                $('#player_name').change(function () {
+                    set_player_name($('#player_name').val());
+                });
+            </script>
             <span class="label">Your name</span>
         </div>
         <br>
@@ -53,7 +69,7 @@
         <br>
         <button id="btn-room-create" class="button primary" onclick="room_create($('#room_name').val(), $('#room_pass').val(), $('#player_name').val(), $('#hatgame_word_per_player').val(), $('#hatgame_seconds_per_turn').val())">Create room</button>
         <button id="btn-room-enter" class="button primary" onclick="room_try_enter($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Enter room</button>
-        <button id="btn-room-enter" class="button primary" onclick="room_try_reconnect($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Reconnect</button>
+        <button id="btn-room-reconnect" class="button primary" onclick="room_try_reconnect($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Reconnect</button>
         <!--
         <button id="btn-ws-test" class="button" onclick="socket_test()">Test Socket</button>
         -->
