@@ -16,7 +16,6 @@ var state_turn_name = '';
 var state_turn_num = 0;
 
 var turn_active = false;
-var state_checking_turn = false;
 var state_words_done = [];
 var state_words_for_turn = [];
 
@@ -34,13 +33,13 @@ function getDateTime() {
     var minute  = now.getMinutes();
     var second  = now.getSeconds(); 
     if(hour.toString().length == 1) {
-        var hour = '0'+hour;
+        hour = '0'+hour;
     }
     if(minute.toString().length == 1) {
-        var minute = '0'+minute;
+        minute = '0'+minute;
     }
     if(second.toString().length == 1) {
-        var second = '0'+second;
+        second = '0'+second;
     }   
     var dateTime = hour+':'+minute+':'+second;   
     return dateTime;
@@ -82,10 +81,6 @@ function activateTimer(time) {
 }
 function stopTimer() {
     clearInterval(timerId);    
-}
-
-function scrollTo(jqueryElement) {
-    $("body").scrollTop(jqueryElement.offset().top);
 }
 
 function post_message(message) {
@@ -170,12 +165,7 @@ function room_create(room_name, room_pass, player_name, words_pers, sec_turn) {
     set_words_per_player(words_pers);
     set_turn_time_sec(sec_turn);
     
-    ws_request_create_room(room_name, room_pass, player_name, words_pers, sec_turn, function (result) {
-        room_enter(room_name, room_pass, player_name, words_pers, sec_turn);
-    }, function (result) {
-        post_message('Failed to create room. continuing anyway');
-        room_enter(room_name, room_pass, player_name, words_pers, sec_turn);
-    });
+    ws_request_create_room(room_name, room_pass, player_name, words_pers, sec_turn);
     return;
 }
 
