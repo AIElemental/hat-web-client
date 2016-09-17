@@ -71,6 +71,17 @@ function ws_add_handler(func) {
     onMessageHandlers.push(func);
 }
 
+function ws_request_get_room_list(player_name){
+    var data = 
+    {
+    "player_name":player_name,
+    "action":"get_room_list",
+    "data":{}
+    };
+    ws_send(data);
+}
+
+
 function ws_request_create_room(room_name, room_pass, player_name, words, turn_time){
     var data = 
     {    
@@ -90,6 +101,21 @@ function ws_request_enter_room(room_name, room_pass, player_name, words, turn_ti
     ws_request_create_room(room_name, room_pass, player_name, words, turn_time);
 }
 
+function ws_request_reconnect_room(room_name, room_pass, player_name, words, turn_time){
+    var data = 
+    {    
+    "player_name":player_name,
+    "action": "reconnect",
+    "data":{
+        "room_name":room_name,
+        "room_pass":room_pass,        
+        "words":parseInt(words),
+        "turn_time":parseInt(turn_time)
+        }
+    };
+    ws_send(data);
+}
+
 function ws_request_start_game(room_name, room_pass, player_name){
     var data = 
     {    
@@ -103,7 +129,6 @@ function ws_request_start_game(room_name, room_pass, player_name){
     ws_send(data);
 }
 
-
 function ws_request_commit_words(room_name, room_pass, player_name, words){
     var data = 
     {    
@@ -113,6 +138,21 @@ function ws_request_commit_words(room_name, room_pass, player_name, words){
         "room_name":room_name,
         "room_pass":room_pass,        
         "words":words
+        }
+    };
+    ws_send(data);
+}
+
+function ws_request_commit_turn(room_name, room_pass, player_name, words, turn_num){
+    var data = 
+    {    
+    "player_name":player_name,
+    "action": "commit_turn",
+    "data":{
+        "room_name":room_name,
+        "room_pass":room_pass,        
+        "words":words,
+        "turn_num":turn_num
         }
     };
     ws_send(data);

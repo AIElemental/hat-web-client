@@ -23,6 +23,7 @@
         <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
         <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
     </nav>
+    <div id="debug_state"></div>
     <div id="page">
     <button id="infobox" onclick='$("#infobox").hide()'></button>
     <div id="room_create_enter" class="pre-room">
@@ -52,6 +53,7 @@
         <br>
         <button id="btn-room-create" class="button primary" onclick="room_create($('#room_name').val(), $('#room_pass').val(), $('#player_name').val(), $('#hatgame_word_per_player').val(), $('#hatgame_seconds_per_turn').val())">Create room</button>
         <button id="btn-room-enter" class="button primary" onclick="room_try_enter($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Enter room</button>
+        <button id="btn-room-enter" class="button primary" onclick="room_try_reconnect($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Reconnect</button>
         <!--
         <button id="btn-ws-test" class="button" onclick="socket_test()">Test Socket</button>
         -->
@@ -80,6 +82,7 @@
     <div id="room_info">
         <span class="tab_title">Current room: <span id="ui_room_name" class="room_name">N/A</span></span>
         <div id="players_list"></div>
+        <div id="situp" class="situp"></div>
         <!--
         <button class="button" onclick="room_reload_players($('#players_list'))">Reload room players</button>
         -->

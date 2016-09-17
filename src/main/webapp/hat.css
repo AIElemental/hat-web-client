@@ -83,3 +83,10 @@
     display: inline-block;
     font-size: 200%;;
 }
+div.situp{
+    position: relative;
+}
+span.situp{
+    display: block;
+    position: absolute;
+}
