@@ -16,14 +16,14 @@ function connect(){
         socket.onopen = function(){
             log('Socket Status: ' + socket.readyState+' (open)');
                 connected = true;
-        }
+        };
 
         socket.onmessage = function(msg){
             log('Received: '+msg.data);
             for (var i = 0; i < onMessageHandlers.length; i++) {
                 onMessageHandlers[i](msg.data);
             }
-        }
+        };
 
         socket.onclose = function(){
             log('Socket Status: ' + socket.readyState+' (Closed)');

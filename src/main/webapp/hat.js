@@ -61,15 +61,16 @@ function get_or_default(obj, default_obj) {
 }
 
 function debug_state() {
-    $("#debug_state").html("");
-    $("#debug_state").append("<span style='display:block;'>state_state=" + state_state + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_room_name=" + state_room_name + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_room_pass=" + state_room_pass + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_words_per_player=" + state_words_per_player + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_turn_time_sec=" + state_turn_time_sec + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_player_name=" + state_player_name + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_turn_name=" + state_turn_name + "</span>");
-    $("#debug_state").append("<span style='display:block;'>state_turn_num=" + state_turn_num + "</span>");
+    var debug_state = $("#debug_state");
+    debug_state.html("");
+    debug_state.append("<span style='display:block;'>state_state=" + state_state + "</span>");
+    debug_state.append("<span style='display:block;'>state_room_name=" + state_room_name + "</span>");
+    debug_state.append("<span style='display:block;'>state_room_pass=" + state_room_pass + "</span>");
+    debug_state.append("<span style='display:block;'>state_words_per_player=" + state_words_per_player + "</span>");
+    debug_state.append("<span style='display:block;'>state_turn_time_sec=" + state_turn_time_sec + "</span>");
+    debug_state.append("<span style='display:block;'>state_player_name=" + state_player_name + "</span>");
+    debug_state.append("<span style='display:block;'>state_turn_name=" + state_turn_name + "</span>");
+    debug_state.append("<span style='display:block;'>state_turn_num=" + state_turn_num + "</span>");
 }
 
 var timerId;
@@ -631,7 +632,7 @@ function init() {
     
     set_state(get_or_default(Cookies.get('ht_state'), 'no_room'));
     set_room_name(get_or_default(Cookies.get('ht_room_name'), 'hatroom'));
-    set_room_password(get_or_default(Cookies.get('ht_room_pass'), 'hatpass');
+    set_room_password(get_or_default(Cookies.get('ht_room_pass'), 'hatpass'));
     set_words_per_player(get_or_default(Cookies.get('ht_wpp'), '20'));
     set_turn_time_sec(get_or_default(Cookies.get('ht_tts'), '20'));
     set_player_name(get_or_default(Cookies.get('ht_player_name'), 'hatplayer'));
