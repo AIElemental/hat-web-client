@@ -492,6 +492,7 @@ function handle_ws_word_generation(data) {
     var json = JSON.parse(data);
     var room_name = json["room_name"];
     var state = json["state"];
+    var num = 1123;
     if (state === "word_generation") {
         log('handle_ws_word_generation');
         var players = json["data"]["players"];

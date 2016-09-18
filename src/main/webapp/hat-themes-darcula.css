@@ -1,0 +1,58 @@
+/* color-scheme - darkula
+cc7832 - orange text
+6897BB - blue text
+E8BF6A - light yellow text
+A9B7C6 - white text
+2B2B2B - dark background
+A5C261 - light green
+808080 - green comment
+8585FF - indigo
+see on switching themes
+http://stackoverflow.com/questions/9979415/dynamically-load-and-unload-stylesheets
+*/
+.button {
+    background-color: #62A678;
+    border-color: #C9FFDB #62A678;
+    color: white;
+}
+
+.button:hover {
+    border-color: #0F0F0F #62A678;
+}
+
+#infobox {
+    background-color: #A62320;
+    border-color: #0F0F0F;
+    color: white;
+}
+
+#infobox:hover {
+    border-color: #F2A9A7 #F2A9A7;
+}
+
+.word_tile {
+    background-color: #EDEBE0;
+    color: black;
+}
+
+.ui_player_turn {
+    background-color: darkorange;
+}
+
+.ui_player_words_pending {
+    background-color: darkred;
+}
+
+.ui_player_words_ready {
+    background-color: forestgreen;
+}
+
+.maintab {
+    background-color: #DFFFF0;
+    border-color: #C0C0C0;
+}
+
+.leftfloat {
+    background-color: #B9DFE0;
+}
+
