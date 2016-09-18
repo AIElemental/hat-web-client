@@ -23,8 +23,8 @@
         <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
         <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
     </nav>
-    <div id="debug_state"></div>
-    <!--<div id="debug_state" style="display:none;"></div>-->
+    <!--<div id="debug_state"></div>-->
+    <div id="debug_state" style="display:none;"></div>
     <div id="page">
     <button id="infobox" onclick='$("#infobox").hide()'></button>
     <div id="room_create_enter" class="pre-room">
@@ -96,7 +96,8 @@
       .change();
     </script>
     <div id="room_info">
-        <span class="tab_title">Current room: <span id="ui_room_name" class="room_name">N/A</span></span>
+        <span class="tab_title">Room: <span id="ui_room_name" class="room_name">N/A</span></span>
+        <span class="tab_title">Player: <span id="ui_player_name" class="room_name">N/A</span></span>
         <div id="players_list"></div>
         <div id="situp" class="situp"></div>
         <!--
@@ -159,6 +160,9 @@
             }
             if (e.which == 119) {
                 $("#backend-holder").toggle();
+            }
+            if (e.which == 115) {
+                $("#debug_state").toggle();
             }
         });
         if (Cookies.get('ht_dev_show_log') === 'true') {

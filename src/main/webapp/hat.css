@@ -18,6 +18,17 @@
     display: block;
     font-size: 150%;
     font-style: italic;
+    transition: font-weight 500ms, background-color 800ms;
+}
+.ui_player_turn{
+    background-color: darkorange;
+    font-weight:bold;
+}
+.ui_player_words_pending{
+    background-color: darkred;
+}
+.ui_player_words_ready{
+    background-color: forestgreen;
 }
 .maintab {
     float: right;
@@ -28,7 +39,7 @@
 }
 .leftfloat{
     float: left;
-    width: 200px;
+    width: 190px;
     margin-left: -200px;
     background-color: #B9DFE0;
 }
@@ -50,7 +61,7 @@
     border-style: solid;
     border-color: #C9FFDB #62A678;
     color: white;
-    padding: 10px 16px;
+    padding: 5px 8px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -61,8 +72,7 @@
 }
 #infobox{
     background-color: #A62320;
-    border-style: solid;
-    border-color: #0F0F0F #0F0F0F;
+    border: solid #0F0F0F;
     color: white;
     padding: 10px 16px;
     text-align: center;
@@ -81,7 +91,11 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 200%;;
+    font-size: 200%;
+    transition: transform 400ms;
+}
+.word_tile:hover{
+    transform: translate(0px, -10px);
 }
 div.situp{
     position: relative;

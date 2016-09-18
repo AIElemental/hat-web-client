@@ -37,8 +37,7 @@ function getDateTime() {
     if (second.toString().length == 1) {
         second = '0' + second;
     }
-    var dateTime = hour + ':' + minute + ':' + second;
-    return dateTime;
+    return hour + ':' + minute + ':' + second;
 }
 
 function log(message) {
@@ -80,7 +79,7 @@ function stopTimer() {
 }
 
 function post_message(message) {
-    message = getDateTime() + ' ' + message;
+    message = getDateTime() + ' ' + message + ' (click to hide)';
     log('post_message: ' + message);
     $("#infobox").addClass("button warning block-shadow-warning text-shadow").text(message).show();
 }
@@ -95,15 +94,22 @@ function set_state(state) {
 
 function set_player_name(player_name) {
     log("state_player_name: " + state_player_name + "->" + player_name);
-    state_player_name = player_name;
-    Cookies.set('ht_player_name', player_name, {expires: 7});
-    debug_state();
+    var pattern = /[a-z0-9]+/i;
+    if (pattern.test(player_name)) {
+        state_player_name = player_name;
+        Cookies.set('ht_player_name', player_name, {expires: 7});
+        $('#ui_player_name').text(state_player_name);
+        debug_state();
+    } else {
+        post_message("Player name can contain only letters and numbers");
+    }
 }
 
 function set_room_name(room_name) {
     log("state_room_name: " + state_room_name + "->" + room_name);
     state_room_name = room_name;
-    $('#ui_room_name').text(state_room_name + ' wpp:' + state_words_per_player + ' spt' + state_turn_time_sec);
+    // $('#ui_room_name').text(state_room_name + ' wpp:' + state_words_per_player + ' spt' + state_turn_time_sec);
+    $('#ui_room_name').text(state_room_name);
     Cookies.set('ht_room_name', room_name, {expires: 7});
     debug_state();
 }
@@ -199,33 +205,69 @@ function set_found_rooms(room_names) {
 function room_set_players(jquery_div_container, players) {
     var players_html = '';
     for (var i = 0; i < players.length; ++i) {
-        players_html += '<span class="ui_player_name">' + players[i] + '</span>';
+        players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + '</span>';
     }
     jquery_div_container.html(players_html);
 }
 
 function room_set_players_words_pending(jquery_div_container, players, players_pending) {
+    var players_html = '';
+    var changed = 0;
     for (var i = 0; i < players.length; ++i) {
-        var playerTag = players[i];
+        var span = $('#ui_player_' + players[i]);
         if (players_pending.indexOf(players[i]) > -1) {
-            playerTag += " (...)";
+            if (!changed && span != undefined) {
+                span.removeClass("ui_player_turn");
+                span.removeClass("ui_player_words_ready");
+                span.addClass("ui_player_words_pending");
+            } else {
+                changed = 1;
+            }
+            players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name ui_player_words_pending">' + players[i] + '</span>';
         } else {
-            playerTag += " (Ready)";
+            if (!changed && span != undefined) {
+                span.removeClass("ui_player_turn");
+                span.removeClass("ui_player_words_pending");
+                span.addClass("ui_player_words_ready");
+            } else {
+                changed = 1;
+            }
+            players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name ui_player_words_ready">' + players[i] + '</span>';
         }
-        players[i] = playerTag;
     }
-    room_set_players(jquery_div_container, players);
+    if (changed) {
+        jquery_div_container.html(players_html);
+    }
 }
 
 function room_set_players_turn(jquery_div_container, players, turn_player, scores) {
+    var players_html = '';
+    var changed = 0;
     for (var i = 0; i < players.length; ++i) {
-        var playerTag = players[i] + ' ' + scores[i] + ' words ';
+        var span = $('#ui_player_' + players[i]);
         if (players[i] === turn_player) {
-            playerTag += " (Turn)";
+            if (!changed && span != undefined) {
+                span.removeClass("ui_player_words_ready");
+                span.removeClass(" ui_player_words_pending");
+                span.addClass("ui_player_turn");
+            } else {
+                changed = 1;
+            }
+            players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name ui_player_turn">' + players[i] + ' guessed ' + scores[i] + '</span>';
+        } else {
+            if (!changed && span != undefined) {
+                span.removeClass("ui_player_words_ready");
+                span.removeClass(" ui_player_words_pending");
+                span.removeClass("ui_player_turn");
+            } else {
+                changed = 1;
+            }
+            players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + ' guessed ' + scores[i] + '</span>';
         }
-        players[i] = playerTag;
     }
-    room_set_players(jquery_div_container, players);
+    if (changed) {
+        jquery_div_container.html(players_html);
+    }
 }
 
 function room_set_players_situp(jquery_div_container, players) {
@@ -237,19 +279,6 @@ function room_set_players_situp(jquery_div_container, players) {
         var style = 'style="left:' + x + 'px;top:' + y + 'px;"';
         log(style);
         players_html += '<span class="situp" ' + style + '>' + players[i] + '</span>';
-    }
-    jquery_div_container.html(players_html);
-}
-
-function request_room_players() {
-    return ['Artem', 'Egor', 'Artem S', 'Den'];
-}
-function room_reload_players(jquery_div_container) {
-    log('Reloading players');
-    var players = request_room_players();
-    var players_html = '';
-    for (var i = 0; i < players.length; ++i) {
-        players_html += '<span class="ui_player_name">' + players[i] + '</span>';
     }
     jquery_div_container.html(players_html);
 }
@@ -270,7 +299,8 @@ function hatgame_submit_words(jqueryElement) {
     log(jqueryElement.val());
     var linesRaw = jqueryElement.val().split("\n");
     var lines = [];
-    for (var i = 0; i < linesRaw.length; ++i) {
+    var i;
+    for (i = 0; i < linesRaw.length; ++i) {
         var line = linesRaw[i].trim();
         if (line != undefined && line.length > 0) {
             lines.push(line);
@@ -280,11 +310,10 @@ function hatgame_submit_words(jqueryElement) {
         post_message("Please enter " + state_words_per_player + " words. You currently have " + lines.length + " words.");
         return;
     }
-    for (var i = 0; i < lines.length; ++i) {
+    for (i = 0; i < lines.length; ++i) {
         lines[i] = lines[i].trim();
     }
     ws_request_commit_words(state_room_name, state_room_pass, state_player_name, lines);
-    post_message("Words sent");
 }
 
 function enter_turn_my() {
@@ -410,7 +439,8 @@ var transitions = {
     "endgame": {
         "no_room": endgame_to_no_room
     }
-}
+};
+
 function transitionTo(state) {
     var possible_transitions = transitions[state_state];
     if (possible_transitions != undefined) {
@@ -431,7 +461,7 @@ function handle_ws_rooms(data) {
         log('handle_ws_rooms');
         var room_info = json["data"];
         var room_names = [];
-        $.each(room_info, function (room_name, room_info) {
+        $.each(room_info, function (room_name) {
             room_names.push(room_name);
         });
         set_found_rooms(room_names);
@@ -500,9 +530,8 @@ function handle_ws_endgame(data) {
     if (state === "endgame") {
         log('handle_ws_endgame');
         var players = json["data"]["players"];
-        var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
-        room_set_players($('#players_list'), players);
+        room_set_players_turn($('#players_list'), players, '', scores);
         room_set_players_situp($('#situp'), json["data"]["situp"]);
         transitionTo(state);
         debug_state();
@@ -615,8 +644,7 @@ function reset() {
 
 function init() {
     //var startingLayout = const_ui_state_word_gen;
-    var startingLayout = const_ui_state_no_room;
-    set_ui_layout(startingLayout);
+    set_ui_layout(const_ui_state_no_room);
     $('#infobox').hide();
 
     set_state('no_room');
