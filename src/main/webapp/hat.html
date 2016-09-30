@@ -178,15 +178,15 @@
                 } else {
                     Cookies.set('ht_dev_show_log', 'true', {expires: 7});
                 }
+            }
+            if (e.which == 119) { /* F8 */
+                $("nav").toggle();
                 var body = $("body");
                 if (body.hasClass("theme-default")) {
                     body.removeClass("theme-default").addClass("theme-darkula");
                 } else {
                     body.removeClass("theme-darkula").addClass("theme-default");
                 }
-            }
-            if (e.which == 119) {
-                $("nav").toggle();
             }
             if (e.which == 119) {
                 $("#backend-holder").toggle();
