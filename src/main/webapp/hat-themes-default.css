@@ -1,3 +1,4 @@
+/* default color scheme - light */
 /* color-scheme - greenery
 #62A678 - rich grean
 #C9FFDB - light green
@@ -6,49 +7,49 @@
 #F2A9A7 - pink
 */
 
-.button {
+.button .theme-default {
     background-color: #62A678;
     border-color: #C9FFDB #62A678;
     color: white;
 }
 
-.button:hover {
+.button:hover .theme-default {
     border-color: #0F0F0F #62A678;
 }
 
-#infobox {
+#infobox .theme-default {
     background-color: #A62320;
     border-color: #0F0F0F;
     color: white;
 }
 
-#infobox:hover {
+#infobox:hover .theme-default {
     border-color: #F2A9A7 #F2A9A7;
 }
 
-.word_tile {
+.word_tile .theme-default {
     background-color: #EDEBE0;
     color: black;
 }
 
-.ui_player_turn {
+.ui_player_turn .theme-default {
     background-color: darkorange;
 }
 
-.ui_player_words_pending {
+.ui_player_words_pending .theme-default {
     background-color: darkred;
 }
 
-.ui_player_words_ready {
+.ui_player_words_ready .theme-default {
     background-color: forestgreen;
 }
 
-.maintab {
+.maintab .theme-default {
     background-color: #DFFFF0;
     border-color: #C0C0C0;
 }
 
-.leftfloat {
+.leftfloat .theme-default {
     background-color: #B9DFE0;
 }
 

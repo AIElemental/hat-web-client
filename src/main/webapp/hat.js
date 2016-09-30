@@ -205,7 +205,7 @@ function set_found_rooms(room_names) {
 function room_set_players(jquery_div_container, players) {
     var players_html = '';
     for (var i = 0; i < players.length; ++i) {
-        players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + '</span>';
+        players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name theme-default">' + players[i] + '</span>';
     }
     jquery_div_container.html(players_html);
 }
