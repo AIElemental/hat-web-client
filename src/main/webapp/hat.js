@@ -146,6 +146,10 @@ function set_backend(url_string) {
     log('backend at ' + url_string);
     backend = url_string;
     Cookies.set('ht_wsbe', url_string, {expires: 7});
+    if (url_string && url_string !== '') {
+        $('#nav_backend').text(url_string);
+        $('#backend').val(url_string);
+    }
     debug_state();
 }
 
@@ -656,12 +660,7 @@ function init() {
     set_player_name(get_or_default(Cookies.get('ht_player_name'), 'hatplayer'));
     set_turn_name('');
 
-    var backend_obj = $('#backend');
-    backend = backend_obj.val();
-    if (!backend || backend === '') {
-        set_backend(Cookies.get('ht_wsbe'));
-        backend_obj.val(backend);
-    }
+    set_backend(Cookies.get('ht_wsbe'));
 
     ws_add_handler(handle_ws_rooms);
     ws_add_handler(handle_ws_in_room);

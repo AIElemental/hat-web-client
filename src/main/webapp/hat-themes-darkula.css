@@ -17,55 +17,55 @@ http://stackoverflow.com/questions/9979415/dynamically-load-and-unload-styleshee
     color: #E8BF6A;
     color: #A9B7C6;
     color: #2B2B2B; /* background */
+    color: #3C3F41; /* background lighter */
     color: #A5C261;
     color: #808080;
     color: #8585FF;
 
 }
 
-.button .theme-darkula {
-    background-color: #62A678;
-    border-color: #C9FFDB #62A678;
-    color: white;
+body.theme-darkula *.button {
+    background-color: #A9B7C6;
+    border-color: #2B2B2B #E8BF6A;
+    color: #E8BF6A;
 }
 
-.button:hover .theme-darkula {
-    border-color: #0F0F0F #62A678;
+body.theme-darkula *.button:hover {
+    border-color: #E8BF6A #E8BF6A;
 }
 
-#infobox .theme-darkula {
-    background-color: #A62320;
-    border-color: #0F0F0F;
-    color: white;
+body.theme-darkula #infobox {
+    background-color: #8585FF;
+    border-color: #E8BF6A;
+    color: #cc7832;
 }
 
-#infobox:hover .theme-darkula {
-    border-color: #F2A9A7 #F2A9A7;
+body.theme-darkula #infobox:hover {
+    border-color: #cc7832 #cc7832;
 }
 
-.word_tile .theme-darkula {
+body.theme-darkula *.word_tile {
     background-color: #EDEBE0;
     color: black;
 }
 
-.ui_player_turn .theme-darkula {
-    background-color: darkorange;
+body.theme-darkula *.ui_player_turn {
+    background-color: #A5C261;
 }
 
-.ui_player_words_pending .theme-darkula {
-    background-color: darkred;
+body.theme-darkula *.ui_player_words_pending {
+    background-color: #cc7832;
 }
 
-.ui_player_words_ready .theme-darkula {
-    background-color: forestgreen;
+body.theme-darkula *.ui_player_words_ready {
+    background-color: #A5C261;
 }
 
-.maintab .theme-darkula {
-    background-color: #DFFFF0;
+body.theme-darkula *.maintab {
+    background-color: #2B2B2B;
     border-color: #C0C0C0;
 }
 
-.leftfloat .theme-darkula {
-    background-color: #B9DFE0;
+body.theme-darkula *.leftfloat {
+    background-color: #3C3F41;
 }
-

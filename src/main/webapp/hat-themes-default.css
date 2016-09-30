@@ -7,49 +7,48 @@
 #F2A9A7 - pink
 */
 
-.button .theme-default {
+body.theme-default *.button {
     background-color: #62A678;
     border-color: #C9FFDB #62A678;
     color: white;
 }
 
-.button:hover .theme-default {
+body.theme-default *.button:hover {
     border-color: #0F0F0F #62A678;
 }
 
-#infobox .theme-default {
+body.theme-default #infobox {
     background-color: #A62320;
     border-color: #0F0F0F;
     color: white;
 }
 
-#infobox:hover .theme-default {
+body.theme-default #infobox:hover {
     border-color: #F2A9A7 #F2A9A7;
 }
 
-.word_tile .theme-default {
+body.theme-default *.word_tile {
     background-color: #EDEBE0;
     color: black;
 }
 
-.ui_player_turn .theme-default {
+body.theme-default *.ui_player_turn {
     background-color: darkorange;
 }
 
-.ui_player_words_pending .theme-default {
+body.theme-default *.ui_player_words_pending {
     background-color: darkred;
 }
 
-.ui_player_words_ready .theme-default {
+body.theme-default *.ui_player_words_ready {
     background-color: forestgreen;
 }
 
-.maintab .theme-default {
+body.theme-default *.maintab {
     background-color: #DFFFF0;
     border-color: #C0C0C0;
 }
 
-.leftfloat .theme-default {
+body.theme-default *.leftfloat {
     background-color: #B9DFE0;
 }
-
