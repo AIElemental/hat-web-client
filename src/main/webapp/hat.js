@@ -222,9 +222,19 @@ function set_found_rooms(room_names) {
 
 function room_set_players(jquery_div_container, players) {
     var players_html = '';
+    players_html += "<table><tbody>";
     for (var i = 0; i < players.length; ++i) {
-        players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name theme-default">' + players[i] + '</span>';
+        players_html += "<tr>";
+        players_html += "<td>";
+        // players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + '</span>';
+        players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + '</span>';
+        players_html += "</td>";
+        players_html += "<td>";
+        players_html += '<span id="ui_player_' + players[i] + '_score" class="ui_player_name"></span>';
+        players_html += "</td>";
+        players_html += "</tr>";
     }
+    players_html += "</tbody></table>";
     jquery_div_container.html(players_html);
 }
 
@@ -261,22 +271,23 @@ function room_set_players_words_pending(jquery_div_container, players, players_p
 function room_set_players_turn(players, turn_player, scores) {
     for (var i = 0; i < players.length; ++i) {
         var span = $('#ui_player_' + players[i]);
+        var span_score = $('#ui_player_' + players[i] + '_score');
         if (players[i] === turn_player) {
             if (span != undefined) {
                 span.removeClass("ui_player_words_ready");
                 span.removeClass(" ui_player_words_pending");
                 span.addClass("ui_player_turn");
             }
-            span.text(players[i] + ' guessed ' + scores[i]);
+            // span.text(players[i] + ' guessed ' + scores[i]);
         } else {
             if (span != undefined) {
                 span.removeClass("ui_player_words_ready");
                 span.removeClass(" ui_player_words_pending");
                 span.removeClass("ui_player_turn");
             }
-            span.text(players[i] + ' guessed ' + scores[i]);
             //players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + ' guessed ' + scores[i] + '</span>';
         }
+        span_score.text(scores[i]);
     }
 }
 
