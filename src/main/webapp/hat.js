@@ -258,33 +258,25 @@ function room_set_players_words_pending(jquery_div_container, players, players_p
     }
 }
 
-function room_set_players_turn(jquery_div_container, players, turn_player, scores) {
-    var players_html = '';
-    var changed = 0;
+function room_set_players_turn(players, turn_player, scores) {
     for (var i = 0; i < players.length; ++i) {
         var span = $('#ui_player_' + players[i]);
         if (players[i] === turn_player) {
-            if (!changed && span != undefined) {
+            if (span != undefined) {
                 span.removeClass("ui_player_words_ready");
                 span.removeClass(" ui_player_words_pending");
                 span.addClass("ui_player_turn");
-            } else {
-                changed = 1;
             }
-            players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name ui_player_turn">' + players[i] + ' guessed ' + scores[i] + '</span>';
+            span.text(players[i] + ' guessed ' + scores[i]);
         } else {
-            if (!changed && span != undefined) {
+            if (span != undefined) {
                 span.removeClass("ui_player_words_ready");
                 span.removeClass(" ui_player_words_pending");
                 span.removeClass("ui_player_turn");
-            } else {
-                changed = 1;
             }
-            players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + ' guessed ' + scores[i] + '</span>';
+            span.text(players[i] + ' guessed ' + scores[i]);
+            //players_html += '<span id="ui_player_' + players[i] + '" class="ui_player_name">' + players[i] + ' guessed ' + scores[i] + '</span>';
         }
-    }
-    if (changed) {
-        jquery_div_container.html(players_html);
     }
 }
 
@@ -542,7 +534,7 @@ function handle_ws_hatgame(data) {
         var words_remaining = json["data"]["words_remaining"];
         var player_name_container = $('#players_list');
         room_set_players(player_name_container, players);
-        room_set_players_turn(player_name_container, players, turn_player, scores);
+        room_set_players_turn(players, turn_player, scores);
         var situp_schema = json["data"]["situp"];
         room_set_players_situp($('#situp'), situp_schema);
 
@@ -563,7 +555,7 @@ function handle_ws_endgame(data) {
         log('handle_ws_endgame');
         var players = json["data"]["players"];
         var scores = json["data"]["scores"];
-        room_set_players_turn($('#players_list'), players, '', scores);
+        room_set_players_turn(players, '', scores);
         room_set_players_situp($('#situp'), json["data"]["situp"]);
         transitionTo(state);
         debug_state();
