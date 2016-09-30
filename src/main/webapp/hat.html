@@ -17,25 +17,43 @@
     <script src="hat-requests.js"></script>
     <script src="hat-ws.js"></script>
     <script src="hat.js"></script>
+    <script src="hat-themes.js"></script>
 </head>
-<body class="theme-default">
-<nav style="display:none">
-    <a href="javascript: set_ui_layout(const_ui_state_pre_room);">const_ui_state_pre_room</a> |
-    <a href="javascript: set_ui_layout(const_ui_state_in_room);">const_ui_state_in_room</a> |
-    <a href="javascript: set_ui_layout(const_ui_state_word_gen);">const_ui_state_word_gen</a> |
-    <a href="javascript: set_ui_layout(const_ui_state_turn_other);">const_ui_state_turn_other</a> |
-    <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
-    <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
-</nav>
+<!--<body class="theme-default">-->
+<body class="theme-darkula">
+<!--<nav style="display:none">-->
+<!--<a href="javascript: set_ui_layout(const_ui_state_pre_room);">const_ui_state_pre_room</a> |-->
+<!--<a href="javascript: set_ui_layout(const_ui_state_in_room);">const_ui_state_in_room</a> |-->
+<!--<a href="javascript: set_ui_layout(const_ui_state_word_gen);">const_ui_state_word_gen</a> |-->
+<!--<a href="javascript: set_ui_layout(const_ui_state_turn_other);">const_ui_state_turn_other</a> |-->
+<!--<a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |-->
+<!--<a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>-->
+<!--</nav>-->
 <nav>
     <!--<span>Current player:</span>-->
-    <span id="nav_player"></span> |
-    <span>Backend: </span>
-    <span id="nav_backend" onclick="$('#backend').show(); $('#nav_backend').hide();" title="Click to change">Click to setup</span>
-    <input id="backend" style="display:none" size="48" type="text"
-           onblur="set_backend($('#backend').val()); $('#backend').hide(); $('#nav_backend').show();"
-           onchange="set_backend($('#backend').val()); $('#backend').hide(); $('#nav_backend').show();"
-           placeholder="ws://<host>:<port>/<path>"/>
+    <span id="nav_player" class="tile"></span>
+    |
+    <span class="tile">Backend:
+        <span id="nav_backend" onclick="$('#nav_backend').hide(); $('#backend').show().focus(); " title="Click to change">Click to setup</span>
+    </span>
+    <input id="backend" style="display:none" size="48" type="text" placeholder="ws://<host>:<port>/<path>"/>
+    <!--onblur="var jq_backend = $('#backend'); set_backend(jq_backend.val()); jq_backend.hide(); $('#nav_backend').show();"-->
+    <!--onchange="var jq_backend = $('#backend'); set_backend(jq_backend.val()); jq_backend.hide(); $('#nav_backend').show();"-->
+    <script>
+        var jq_backend = $('#backend');
+        jq_backend.focusout(function () {
+            set_backend(jq_backend.val());
+            jq_backend.hide();
+            $('#nav_backend').show();
+        });
+        jq_backend.keyup(function (e) {
+            if (e.which === 13) { /* Enter */
+                jq_backend.focusout();
+            }
+        });
+    </script>
+    |
+    <a class="tile" href="javascript: next_theme();">Switch theme</a>
 </nav>
 <!--<div id="debug_state"></div>-->
 <div id="debug_state" style="display:none;"></div>
@@ -78,7 +96,7 @@
         </div>
         <div class="input-control modern text">
             <input type="text" id="hatgame_seconds_per_turn" value="25"/>
-            <span class="label">Second per turn</span>
+            <span class="label">Seconds per turn</span>
         </div>
         <br>
         <button id="btn-room-create" class="button"
@@ -99,8 +117,8 @@
     </div>
     <div id="room_find" class="pre-room">
         <span class="tab_title">Find Room</span>
-        <div class="input-control select">
-            <select id="room_select" size="5">
+        <div id="room_select_container">
+            <select id="room_select">
                 <option value="blank">No rooms found</option>
             </select>
         </div>
@@ -111,7 +129,7 @@
         $("#room_select")
                 .change(function () {
                     var str = "";
-                    $("#room_select option:selected").each(function () {
+                    $("#room_select").find("option:selected").each(function () {
                         str = $(this).text();
                     });
                     $("#room_name").val(str);
@@ -123,7 +141,7 @@
         <span id="ui_room_name" class="tab_title room_name">N/A</span>
         <!--<span class="tab_title">Player: <span id="ui_player_name" class="room_name">N/A</span></span>-->
         <div id="players_list"></div>
-        <div id="situp" class="situp"></div>
+        <div id="situp" class="situp" style="display: none"></div>
         <!--
         <button class="button" onclick="room_reload_players($('#players_list'))">Reload room players</button>
         -->
@@ -136,13 +154,15 @@
         <span class="tab_title">Word Generation<span id="ui_words_per_player"></span></span>
         <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>
         <br>
-        <button class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words</button>
+        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit
+            words
+        </button>
     </div>
     <div id="game_turn">
         <div id="hatgame_turn_other">
             <span class="tab_title">Game - <span id="ui_other_turn_correction">Others</span> turn</span>
             <!--<div class="playersSchema">-->
-                <!--<span class="ui_player_tile">Test Player 1</span>-->
+            <!--<span class="ui_player_tile">Test Player 1</span>-->
             <!--</div>-->
         </div>
         <div id="hatgame_turn_me">
@@ -180,25 +200,24 @@
                 }
             }
             if (e.which == 119) { /* F8 */
-                $("nav").toggle();
-                var body = $("body");
-                if (body.hasClass("theme-default")) {
-                    body.removeClass("theme-default").addClass("theme-darkula");
-                } else {
-                    body.removeClass("theme-darkula").addClass("theme-default");
-                }
+//                $("nav").toggle();
+//                var body = $("body");
+//                if (body.hasClass("theme-default")) {
+//                    body.removeClass("theme-default").addClass("theme-darkula");
+//                } else {
+//                    body.removeClass("theme-darkula").addClass("theme-default");
+//                }
             }
             if (e.which == 119) {
                 $("#backend-holder").toggle();
             }
-            if (e.which == 115) {
-                $("#debug_state").toggle();
-            }
+//            if (e.which == 115) {
+//                $("#debug_state").toggle();
+//            }
         });
         if (Cookies.get('ht_dev_show_log') === 'true') {
             $("#log").show();
         }
-        ;
     </script>
     <!--TODO replace with adequate input field-->
     <div id="backend-holder" class="leftfloat" style="display:none">

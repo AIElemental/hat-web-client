@@ -52,34 +52,34 @@
 
 .button {
     border-style: solid;
-    padding: 5px 8px;
+    padding: 2px 5px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 150%;
+    font-size: 120%;
 }
 
 #infobox {
     border-style: solid;
-    padding: 10px 16px;
+    padding: 3px 5px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 150%;
+    font-size: 120%;
 }
 
 .word_tile {
     border-style: none;
-    padding: 16px 20px;
+    padding: 10px 12px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 200%;
+    font-size: 165%;
     transition: transform 400ms;
 }
 
 .word_tile:hover {
-    transform: translate(0px, -10px);
+    transform: translate(0px, -6px);
 }
 
 div.situp {
@@ -89,4 +89,22 @@ div.situp {
 span.situp {
     display: block;
     position: absolute;
+}
+
+#room_select_container {
+    /*height: 100px;*/
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    border: solid grey 1px;
+}
+
+#room_select_container select {
+    padding:10px; margin:-5px -20px -5px -5px;
+}
+
+#nav_player {
+    display: inline-block;
+    font-size: 125%;
+    font-style: italic;
 }

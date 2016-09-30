@@ -217,6 +217,7 @@ function set_found_rooms(room_names) {
     if (room_names.length > 0) {
         room_select.val(room_names[0]);
     }
+    room_select.attr("size", room_names.length);
     room_select.change();
 }
 
@@ -318,6 +319,13 @@ function hatgame_start_new_game() {
 /* Word generation functions */
 function hatgame_submit_words(jqueryElement) {
     log(jqueryElement.val());
+
+    var submit_button = $('#ui_submit_words_button');
+    submit_button.prop('disabled', true);
+    setTimeout(function () {
+        submit_button.prop('disabled', false);
+    }, 1000);
+
     var linesRaw = jqueryElement.val().split("\n");
     var lines = [];
     var i;
@@ -583,6 +591,7 @@ function set_ui_state_pre_room() {
     $('#game_word_enter').hide();
     $('#game_turn').hide();
     $('#game_aftermath').hide();
+    $('#situp').html(''); //clear situp schema
 
     $('#room_name').val(Cookies.get('ht_room_name'));
     $('#room_pass').val(Cookies.get('ht_room_pass'));
