@@ -8,6 +8,7 @@ var state_room_pass = '';
 var state_words_per_player = 20;
 var state_turn_time_sec = 20;
 var state_player_name = '';
+var state_situp = [];
 var state_turn_name = '';
 var state_turn_num = 0;
 
@@ -99,6 +100,7 @@ function set_player_name(player_name) {
         state_player_name = player_name;
         Cookies.set('ht_player_name', player_name, {expires: 7});
         $('#ui_player_name').text(state_player_name);
+        $('#nav_player').text(state_player_name);
         debug_state();
     } else {
         post_message("Player name can contain only letters and numbers");
@@ -109,7 +111,7 @@ function set_room_name(room_name) {
     log("state_room_name: " + state_room_name + "->" + room_name);
     state_room_name = room_name;
     // $('#ui_room_name').text(state_room_name + ' wpp:' + state_words_per_player + ' spt' + state_turn_time_sec);
-    $('#ui_room_name').text(state_room_name);
+    $('#ui_room_name').text(state_room_name + ' w:' + state_words_per_player + ' t:' + state_turn_time_sec);
     Cookies.set('ht_room_name', room_name, {expires: 7});
     debug_state();
 }
@@ -125,6 +127,7 @@ function set_words_per_player(words) {
     log("state_words_per_player: " + state_words_per_player + "->" + words);
     state_words_per_player = words;
     Cookies.set('ht_wpp', words, {expires: 7});
+    $('#ui_words_per_player').text(' (' + state_words_per_player + ' words)');
     debug_state();
 }
 
@@ -151,6 +154,17 @@ function set_backend(url_string) {
         $('#backend').val(url_string);
     }
     debug_state();
+}
+
+function set_situp(situp_schema) {
+    log('set situp = ' + situp_schema);
+    state_situp = situp_schema;
+}
+
+function partner(player_name) {
+    var player_index = state_situp.indexOf(player_name);
+    player_index = (player_index + state_situp.length/2) % state_situp.length;
+    return state_situp[player_index];
 }
 
 function room_create(room_name, room_pass, player_name, words_pers, sec_turn) {
@@ -311,7 +325,10 @@ function hatgame_submit_words(jqueryElement) {
         }
     }
     if (lines.length < state_words_per_player) {
-        post_message("Please enter " + state_words_per_player + " words. You currently have " + lines.length + " words.");
+        post_message("Need more words (" + (state_words_per_player - lines.length) + ")");
+        return;
+    } else if (lines.length > state_words_per_player) {
+        post_message("Too many words (" + lines.length + ")");
         return;
     }
     for (i = 0; i < lines.length; ++i) {
@@ -333,6 +350,11 @@ function enter_turn_stage() {
     if (state_turn_name === state_player_name) {
         enter_turn_my();
     } else {
+        if (state_turn_name === partner(state_player_name)) {
+            $('#ui_other_turn_correction').text("Your partner");
+        } else {
+            $('#ui_other_turn_correction').text("Others");
+        }
         enter_turn_other();
     }
 }
@@ -518,8 +540,13 @@ function handle_ws_hatgame(data) {
         var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
         var words_remaining = json["data"]["words_remaining"];
-        room_set_players_turn($('#players_list'), players, turn_player, scores);
-        room_set_players_situp($('#situp'), json["data"]["situp"]);
+        var player_name_container = $('#players_list');
+        room_set_players(player_name_container, players);
+        room_set_players_turn(player_name_container, players, turn_player, scores);
+        var situp_schema = json["data"]["situp"];
+        room_set_players_situp($('#situp'), situp_schema);
+
+        set_situp(situp_schema);
         state_words_for_turn = json["data"]["turn_words"];
         set_turn_name(turn_player);
 
@@ -660,7 +687,12 @@ function init() {
     set_player_name(get_or_default(Cookies.get('ht_player_name'), 'hatplayer'));
     set_turn_name('');
 
-    set_backend(Cookies.get('ht_wsbe'));
+    var saved_backend = Cookies.get('ht_wsbe');
+    if (!saved_backend || saved_backend === '' || saved_backend === 'undefined') {
+        saved_backend = 'ws://46.101.133.65:8888/ws';
+    }
+    set_backend(saved_backend);
+
 
     ws_add_handler(handle_ws_rooms);
     ws_add_handler(handle_ws_in_room);

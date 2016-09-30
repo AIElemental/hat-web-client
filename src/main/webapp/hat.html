@@ -19,24 +19,27 @@
     <script src="hat.js"></script>
 </head>
 <body class="theme-default">
-     <nav style="display:none">
-        <a href="javascript: set_ui_layout(const_ui_state_pre_room);">const_ui_state_pre_room</a> |
-        <a href="javascript: set_ui_layout(const_ui_state_in_room);">const_ui_state_in_room</a> |
-        <a href="javascript: set_ui_layout(const_ui_state_word_gen);">const_ui_state_word_gen</a> |
-        <a href="javascript: set_ui_layout(const_ui_state_turn_other);">const_ui_state_turn_other</a> |
-        <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
-        <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
-    </nav>
-     <nav>
-         <span>Current player:</span>
-         <span id="nav_player"></span> |
-         <span>Backend: </span>
-         <span id="nav_backend" onclick="$('#backend').show(); $('#nav_backend').hide();" title="Click to change">Click to setup</span>
-         <input id="backend" style="display:none" size="48" type="text" onchange="set_backend($('#backend').val()); $('#backend').hide(); $('#nav_backend').show();" placeholder="ws://<host>:<port>/<path>"/>
-     </nav>
-    <!--<div id="debug_state"></div>-->
-    <div id="debug_state" style="display:none;"></div>
-    <div id="page">
+<nav style="display:none">
+    <a href="javascript: set_ui_layout(const_ui_state_pre_room);">const_ui_state_pre_room</a> |
+    <a href="javascript: set_ui_layout(const_ui_state_in_room);">const_ui_state_in_room</a> |
+    <a href="javascript: set_ui_layout(const_ui_state_word_gen);">const_ui_state_word_gen</a> |
+    <a href="javascript: set_ui_layout(const_ui_state_turn_other);">const_ui_state_turn_other</a> |
+    <a href="javascript: set_ui_layout(const_ui_state_turn_me);">const_ui_state_turn_me</a> |
+    <a href="javascript: set_ui_layout(const_ui_state_endgame);">const_ui_state_endgame</a>
+</nav>
+<nav>
+    <!--<span>Current player:</span>-->
+    <span id="nav_player"></span> |
+    <span>Backend: </span>
+    <span id="nav_backend" onclick="$('#backend').show(); $('#nav_backend').hide();" title="Click to change">Click to setup</span>
+    <input id="backend" style="display:none" size="48" type="text"
+           onblur="set_backend($('#backend').val()); $('#backend').hide(); $('#nav_backend').show();"
+           onchange="set_backend($('#backend').val()); $('#backend').hide(); $('#nav_backend').show();"
+           placeholder="ws://<host>:<port>/<path>"/>
+</nav>
+<!--<div id="debug_state"></div>-->
+<div id="debug_state" style="display:none;"></div>
+<div id="page">
     <button id="infobox" onclick='$("#infobox").hide()'></button>
     <div id="room_create_enter" class="pre-room">
         <span class="tab_title">Create or Enter a Room</span>
@@ -74,13 +77,22 @@
             <span class="label">Words per player</span>
         </div>
         <div class="input-control modern text">
-            <input type="text" id="hatgame_seconds_per_turn"value="25"/>
+            <input type="text" id="hatgame_seconds_per_turn" value="25"/>
             <span class="label">Second per turn</span>
         </div>
         <br>
-        <button id="btn-room-create" class="button" onclick="room_create($('#room_name').val(), $('#room_pass').val(), $('#player_name').val(), $('#hatgame_word_per_player').val(), $('#hatgame_seconds_per_turn').val())">Create room</button>
-        <button id="btn-room-enter" class="button" onclick="room_try_enter($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Enter room</button>
-        <button id="btn-room-reconnect" class="button" onclick="room_try_reconnect($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Reconnect</button>
+        <button id="btn-room-create" class="button"
+                onclick="room_create($('#room_name').val(), $('#room_pass').val(), $('#player_name').val(), $('#hatgame_word_per_player').val(), $('#hatgame_seconds_per_turn').val())">
+            Create room
+        </button>
+        <button id="btn-room-enter" class="button"
+                onclick="room_try_enter($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">Enter
+            room
+        </button>
+        <button id="btn-room-reconnect" class="button"
+                onclick="room_try_reconnect($('#room_name').val(), $('#room_pass').val(), $('#player_name').val())">
+            Reconnect
+        </button>
         <!--
         <button id="btn-ws-test" class="button" onclick="socket_test()">Test Socket</button>
         -->
@@ -96,19 +108,20 @@
         <button id="btn-reload-rooms" class="button" onclick="room_find()">Reload rooms</button>
     </div>
     <script>
-    $( "#room_select" )
-      .change(function () {
-        var str = "";
-        $( "#room_select option:selected" ).each(function() {
-          str = $( this ).text();
-        });
-        $( "#room_name" ).val( str );
-      })
-      .change();
+        $("#room_select")
+                .change(function () {
+                    var str = "";
+                    $("#room_select option:selected").each(function () {
+                        str = $(this).text();
+                    });
+                    $("#room_name").val(str);
+                })
+                .change();
     </script>
     <div id="room_info">
-        <span class="tab_title">Room: <span id="ui_room_name" class="room_name">N/A</span></span>
-        <span class="tab_title">Player: <span id="ui_player_name" class="room_name">N/A</span></span>
+        <!--<span class="tab_title">Room: </span>-->
+        <span id="ui_room_name" class="tab_title room_name">N/A</span>
+        <!--<span class="tab_title">Player: <span id="ui_player_name" class="room_name">N/A</span></span>-->
         <div id="players_list"></div>
         <div id="situp" class="situp"></div>
         <!--
@@ -116,18 +129,18 @@
         -->
     </div>
     <div id="room_inroom">
-        <span class="tab_title">Game start</span>
+        <!--<span class="tab_title">Game start</span>-->
         <button class="button" onclick="hatgame_start_new_game()">Start new game</button>
     </div>
     <div id="game_word_enter">
-        <span class="tab_title">Word Generation</span>
+        <span class="tab_title">Word Generation<span id="ui_words_per_player"></span></span>
         <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>
         <br>
         <button class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words</button>
     </div>
     <div id="game_turn">
         <div id="hatgame_turn_other">
-            <span class="tab_title">Game - Others turn</span>
+            <span class="tab_title">Game - <span id="ui_other_turn_correction">Others</span> turn</span>
             <div class="playersSchema">
                 <span class="ui_player_tile">Test Player 1</span>
             </div>
@@ -156,8 +169,8 @@
             <div>Log:</div>
         </div>
     </div>
-    <script>        
-        $(window).on('keydown', function(e) {
+    <script>
+        $(window).on('keydown', function (e) {
             if (e.which == 120) { /* F9 */
                 $("#log").toggle();
                 if (Cookies.get('ht_dev_show_log') === 'true') {
@@ -184,13 +197,14 @@
         });
         if (Cookies.get('ht_dev_show_log') === 'true') {
             $("#log").show();
-        };
+        }
+        ;
     </script>
-        <!--TODO replace with adequate input field-->
+    <!--TODO replace with adequate input field-->
     <div id="backend-holder" class="leftfloat" style="display:none">
         <!--<input type="text" id="backend" value=""/>-->
         <button onclick="set_backend($('#backend').val())">save</button>
-    </div>    
     </div>
+</div>
 </body>
 </html>
