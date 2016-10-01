@@ -92,19 +92,16 @@
             <input type="text" id="player_name"/>
             <script>
                 var jq_player_name_input = $('#player_name');
-                jq_player_name_input.change(function () {
-                    try_set_player_name(jq_player_name_input.val());
-                });
                 jq_player_name_input.keyup(function (e) {
                     if (e.which === 13) { /* Enter */
-                        jq_player_name_input.change();
+                        try_set_player_name(jq_player_name_input.val());
                     }
                 });
             </script>
             <span class="label">Your name</span>
             <br>
             <button id="btn-room-submit_player" class="button"
-                    onclick="$('#player_name').change();">
+                    onclick="try_set_player_name($('#player_name').val());">
                 Submit
             </button>
         </div>
