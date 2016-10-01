@@ -164,6 +164,17 @@ function ws_request_commit_turn(room_name, room_pass, player_name, words, turn_n
     ws_send(data);
 }
 
+function ws_request_set_name(player_name) {
+    var data =
+    {
+        "action": "set_name",
+        "data" : {
+            "player_name": player_name
+        }
+    };
+    ws_send(data);
+}
+
 
 function socket_test() {
     var socket;

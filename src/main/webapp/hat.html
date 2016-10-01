@@ -35,6 +35,7 @@
     <script>
         var jq_player = $('#nav_player');
         jq_player.click(function () {
+            if (true) return; //disable name edits;
             if ($('#room_create_enter').is(":visible")) {
                 jq_player.hide();
                 $('#nav_player_input').show().focus();
@@ -92,19 +93,18 @@
             <script>
                 var jq_player_name_input = $('#player_name');
                 jq_player_name_input.change(function () {
-                    set_player_name(jq_player_name_input.val());
+                    try_set_player_name(jq_player_name_input.val());
                 });
                 jq_player_name_input.keyup(function (e) {
                     if (e.which === 13) { /* Enter */
                         jq_player_name_input.change();
-                        set_ui_layout(const_ui_state_no_room);
                     }
                 });
             </script>
             <span class="label">Your name</span>
             <br>
             <button id="btn-room-submit_player" class="button"
-                    onclick="$('#player_name').change(); set_ui_layout(const_ui_state_no_room);">
+                    onclick="$('#player_name').change();">
                 Submit
             </button>
         </div>
@@ -206,8 +206,7 @@
         <span class="tab_title">Word Generation<span id="ui_words_per_player"></span></span>
         <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>
         <br>
-        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit
-            words
+        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words
         </button>
     </div>
     <div id="game_turn">
