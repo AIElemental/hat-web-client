@@ -49,10 +49,22 @@ body.theme-darkula *.button {
     color: #E8BF6A;
 }
 
+body.theme-darkula *.button.disabled {
+    background-color: #3C3F41;
+    border-color: #A9B7C6;
+    color: #A9B7C6;
+}
+
 body.theme-darkula *.button:hover {
     background-color: #2B2B2B;
     border-color: #cc7832 #cc7832;
     color: #cc7832;
+}
+
+body.theme-darkula *.button.disabled:hover {
+    background-color: #3C3F41;
+    border-color: #A9B7C6;
+    color: #A9B7C6;
 }
 
 body.theme-darkula #infobox {

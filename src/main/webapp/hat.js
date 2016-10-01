@@ -346,6 +346,7 @@ function hatgame_submit_words(jqueryElement) {
         lines[i] = lines[i].trim();
     }
     ws_request_commit_words(state_room_name, state_room_pass, state_player_name, lines);
+    post_message("Words sent. Awaiting other players...");
 }
 
 function enter_turn_my() {
@@ -406,6 +407,11 @@ function hatgame_next_word() {
     state_words_done.push(cur_word);
     log(state_words_done);
     $('#done_words_holder').append(' <span class="word_tile">' + cur_word + '</span>');
+    $('#ui_button_next_word').attr("disabled", true).addClass("disabled");
+
+    setTimeout(function () {
+        $('#ui_button_next_word').attr("disabled", false).removeClass("disabled");
+    }, 800);
     fetch_next_word();
 }
 
@@ -616,6 +622,7 @@ function set_ui_state_word_gen() {
     $('#room_info').addClass('leftfloat').show();
     $('#room_inroom').hide();
     $('#game_word_enter').addClass('maintab').show();
+    $('#word_enter').val('');
     $('#game_turn').hide();
     $('#game_aftermath').hide();
 }

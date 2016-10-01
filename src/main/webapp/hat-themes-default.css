@@ -13,8 +13,20 @@ body.theme-default *.button {
     color: white;
 }
 
+body.theme-darkula *.button.disabled {
+    background-color: #C9FFDB;
+    border-color: #808080;
+    color: #808080;
+}
+
 body.theme-default *.button:hover {
     border-color: #0F0F0F #62A678;
+}
+
+body.theme-darkula *.button.disabled:hover {
+    background-color: #C9FFDB;
+    border-color: #808080;
+    color: #808080;
 }
 
 body.theme-default #infobox {

@@ -70,7 +70,8 @@
 
 .word_tile {
     border-style: none;
-    padding: 10px 12px;
+    padding: 6px 8px;
+    margin: 2px 0;
     text-align: center;
     text-decoration: none;
     display: inline-block;
