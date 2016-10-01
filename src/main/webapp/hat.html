@@ -20,7 +20,7 @@
     <script src="hat-themes.js"></script>
 </head>
 <!--<body class="theme-default">-->
-<body class="theme-darkula">
+<body class="theme-default">
 <!--<nav style="display:none">-->
 <!--<a href="javascript: set_ui_layout(const_ui_state_pre_room);">const_ui_state_pre_room</a> |-->
 <!--<a href="javascript: set_ui_layout(const_ui_state_in_room);">const_ui_state_in_room</a> |-->
@@ -31,10 +31,36 @@
 <!--</nav>-->
 <nav>
     <!--<span>Current player:</span>-->
-    <span id="nav_player" class="tile"></span>
+    <span id="nav_player" class="tile" title="Click to change"></span>
+    <script>
+        var jq_player = $('#nav_player');
+        jq_player.click(function () {
+            if ($('#room_create_enter').is(":visible")) {
+                jq_player.hide();
+                $('#nav_player_input').show().focus();
+            } else {
+                post_message("Cannot change name while in game");
+            }
+        });
+    </script>
+    <input id="nav_player_input" style="display:none" size="16" type="text" placeholder="playername"/>
+    <script>
+        var jq_player_input = $('#nav_player_input');
+        jq_player_input.focusout(function () {
+            set_player_name(jq_player_input.val());
+            jq_player_input.hide();
+            $('#nav_player').show();
+        });
+        jq_player_input.keyup(function (e) {
+            if (e.which === 13) { /* Enter */
+                jq_player_input.focusout();
+            }
+        });
+    </script>
     |
     <span class="tile">Backend:
-        <span id="nav_backend" onclick="$('#nav_backend').hide(); $('#backend').show().focus(); " title="Click to change">Click to setup</span>
+        <span id="nav_backend" onclick="$('#nav_backend').hide(); $('#backend').show().focus(); "
+              title="Click to change">Click to setup</span>
     </span>
     <input id="backend" style="display:none" size="48" type="text" placeholder="ws://<host>:<port>/<path>"/>
     <!--onblur="var jq_backend = $('#backend'); set_backend(jq_backend.val()); jq_backend.hide(); $('#nav_backend').show();"-->
@@ -59,9 +85,33 @@
 <div id="debug_state" style="display:none;"></div>
 <div id="page">
     <button id="infobox" onclick='$("#infobox").hide()'></button>
+    <div id="room_enter_player_name">
+        <span class="tab_title">Enter your name</span>
+        <div>
+            <input type="text" id="player_name"/>
+            <script>
+                var jq_player_name_input = $('#player_name');
+                jq_player_name_input.change(function () {
+                    set_player_name(jq_player_name_input.val());
+                });
+                jq_player_name_input.keyup(function (e) {
+                    if (e.which === 13) { /* Enter */
+                        jq_player_name_input.change();
+                        set_ui_layout(const_ui_state_no_room);
+                    }
+                });
+            </script>
+            <span class="label">Your name</span>
+            <br>
+            <button id="btn-room-submit_player" class="button"
+                    onclick="$('#player_name').change(); set_ui_layout(const_ui_state_no_room);">
+                Submit
+            </button>
+        </div>
+    </div>
     <div id="room_create_enter" class="pre-room">
         <span class="tab_title">Create or Enter a Room</span>
-        <div class="input-control modern text">
+        <div>
             <input type="text" id="room_name"/>
             <script>
                 $('#room_name').change(function () {
@@ -70,7 +120,7 @@
             </script>
             <span class="label">Room name</span>
         </div>
-        <div class="input-control modern text">
+        <div>
             <input type="text" id="room_pass"/>
             <script>
                 $('#room_pass').change(function () {
@@ -80,7 +130,8 @@
             <span class="label">Room password</span>
         </div>
         <br>
-        <div class="input-control modern text">
+        <!--
+        <div>
             <input type="text" id="player_name"/>
             <script>
                 $('#player_name').change(function () {
@@ -90,13 +141,14 @@
             <span class="label">Your name</span>
         </div>
         <br>
-        <div class="input-control modern text">
+        -->
+        <div>
             <input type="text" id="hatgame_word_per_player" value="25"/>
-            <span class="label">Words per player</span>
+            <span class="label">Words per player (New room)</span>
         </div>
-        <div class="input-control modern text">
+        <div>
             <input type="text" id="hatgame_seconds_per_turn" value="25"/>
-            <span class="label">Seconds per turn</span>
+            <span class="label">Seconds per turn (New room)</span>
         </div>
         <br>
         <button id="btn-room-create" class="button"
@@ -190,13 +242,25 @@
         </div>
     </div>
     <script>
+        var counter = [0];
+        var counter_down_on = false;
+        setInterval(function () {
+            if (counter_down_on) {
+                counter[0] = 0;
+                counter_down_on = false;
+            }
+        }, 1500);
         $(window).on('keydown', function (e) {
             if (e.which == 120) { /* F9 */
-                $("#log").toggle();
-                if (Cookies.get('ht_dev_show_log') === 'true') {
-                    Cookies.set('ht_dev_show_log', 'false', {expires: 7});
-                } else {
-                    Cookies.set('ht_dev_show_log', 'true', {expires: 7});
+                counter[0]++;
+                counter_down_on = true;
+                if (counter[0] == 3) {
+                    $("#log").toggle();
+                    if (Cookies.get('ht_dev_show_log') === 'true') {
+                        Cookies.set('ht_dev_show_log', 'false', {expires: 7});
+                    } else {
+                        Cookies.set('ht_dev_show_log', 'true', {expires: 7});
+                    }
                 }
             }
             if (e.which == 119) { /* F8 */

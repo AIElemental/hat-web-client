@@ -22,6 +22,7 @@ var const_ui_state_word_gen = 2;
 var const_ui_state_turn_other = 3;
 var const_ui_state_turn_me = 4;
 var const_ui_state_endgame = 5;
+var const_ui_state_player_name = 6;
 
 /* Common functions */
 function getDateTime() {
@@ -101,6 +102,7 @@ function set_player_name(player_name) {
         Cookies.set('ht_player_name', player_name, {expires: 7});
         $('#ui_player_name').text(state_player_name);
         $('#nav_player').text(state_player_name);
+        $('#nav_player_input').val(state_player_name);
         debug_state();
     } else {
         post_message("Player name can contain only letters and numbers");
@@ -598,6 +600,7 @@ function set_ui_state_pre_room() {
     $('#game_turn').hide();
     $('#game_aftermath').hide();
     $('#situp').html(''); //clear situp schema
+    $('#room_enter_player_name').hide();
 
     $('#room_name').val(Cookies.get('ht_room_name'));
     $('#room_pass').val(Cookies.get('ht_room_pass'));
@@ -614,6 +617,7 @@ function set_ui_state_in_room() {
     $('#game_word_enter').hide();
     $('#game_turn').hide();
     $('#game_aftermath').hide();
+    $('#room_enter_player_name').hide();
 }
 function set_ui_state_word_gen() {
     log('set word_gen layout');
@@ -625,6 +629,7 @@ function set_ui_state_word_gen() {
     $('#word_enter').val('');
     $('#game_turn').hide();
     $('#game_aftermath').hide();
+    $('#room_enter_player_name').hide();
 }
 function set_ui_state_turn_other() {
     log('set turn_other layout');
@@ -637,6 +642,7 @@ function set_ui_state_turn_other() {
     $('#hatgame_turn_other').addClass('maintab').show();
     $('#hatgame_turn_me').hide();
     $('#game_aftermath').hide();
+    $('#room_enter_player_name').hide();
 }
 function set_ui_state_turn_me() {
     log('set turn_my layout');
@@ -651,6 +657,7 @@ function set_ui_state_turn_me() {
     get_turn_me_pre().show();
     get_turn_me_active().hide();
     $('#game_aftermath').hide();
+    $('#room_enter_player_name').hide();
 }
 function set_ui_state_endgame() {
     log('set endgame layout');
@@ -661,6 +668,19 @@ function set_ui_state_endgame() {
     $('#game_word_enter').hide();
     $('#game_turn').hide();
     $('#game_aftermath').addClass('maintab').show();
+    $('#room_enter_player_name').hide();
+}
+
+function set_ui_state_player_name() {
+    log('set player name layout');
+    $('#room_find').hide();
+    $('#room_create_enter').hide();
+    $('#room_info').hide();
+    $('#room_inroom').hide();
+    $('#game_word_enter').hide();
+    $('#game_turn').hide();
+    $('#game_aftermath').hide();
+    $('#room_enter_player_name').addClass('maintab').show();
 }
 
 function set_ui_layout(layout) {
@@ -684,6 +704,9 @@ function set_ui_layout(layout) {
         case const_ui_state_endgame:
             set_ui_state_endgame();
             break;
+        case const_ui_state_player_name:
+            set_ui_state_player_name();
+            break;
         default:
             log('UNKNOWN LAYOUT ' + layout);
     }
@@ -703,7 +726,14 @@ function init() {
     set_room_password(get_or_default(Cookies.get('ht_room_pass'), 'hatpass'));
     set_words_per_player(get_or_default(Cookies.get('ht_wpp'), '20'));
     set_turn_time_sec(get_or_default(Cookies.get('ht_tts'), '20'));
-    set_player_name(get_or_default(Cookies.get('ht_player_name'), 'hatplayer'));
+
+    var stored_name = Cookies.get('ht_player_name');
+    if (!stored_name || stored_name === '') {
+        set_ui_layout(const_ui_state_player_name);
+    } else {
+        set_player_name(stored_name);
+    }
+
     set_turn_name('');
 
     var saved_backend = Cookies.get('ht_wsbe');
