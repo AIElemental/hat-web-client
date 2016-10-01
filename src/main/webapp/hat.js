@@ -185,7 +185,12 @@ function room_try_reconnect(room_name, room_pass, player_name) {
 }
 
 function try_set_player_name(player_name) {
-    ws_request_set_name(player_name);
+    var pattern = /^[a-z0-9]{1,8}$/i;
+    if (pattern.test(player_name)) {
+        ws_request_set_name(player_name);
+    } else {
+        post_message("Player name should be 1-8 letters or digits");
+    }
     //todo add some loading bar;
 }
 
