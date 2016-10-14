@@ -113,8 +113,3 @@ span.situp {
     font-size: 125%;
     font-style: italic;
 }
-
-.last_word_holder span {
-    display: inline-block;
-    border: solid grey 1px;
-}

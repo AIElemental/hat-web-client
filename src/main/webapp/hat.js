@@ -319,8 +319,13 @@ function room_set_players_situp(jquery_div_container, players) {
 }
 
 function show_word_info(word, time_to_guess, author) {
+    $(".last_word_holder").show();
     get_last_word_word().text(word);
-    get_last_word_time().text(time_to_guess);
+    var time = time_to_guess/1000;
+    if (time > 5) {
+        time = Math.round(time + 0.5);
+    }
+    get_last_word_time().text(time);
     get_last_word_author().text(author);
 }
 
@@ -364,8 +369,7 @@ function hatgame_submit_words(jqueryElement) {
     for (i = 0; i < lines.length; ++i) {
         lines[i] = lines[i].trim();
     }
-    //not used anymore, each word is submitted individually
-    //ws_request_commit_words(state_room_name, state_room_pass, state_player_name, lines);
+    ws_request_commit_words(state_room_name, state_room_pass, state_player_name, lines);
     submit_button.hide();
     //post_message("Words sent. Awaiting other players...");
 }
@@ -442,14 +446,19 @@ function hatgame_next_word() {
 }
 
 function hatgame_end_turn() {
-    //send last word time, even though it was not guessed
-    var time = new Date().getTime() - state_last_word_time;
-    ws_request_word_info(get_word().text(), time, true);
+    //if there are remaining words in game
+    if (state_words_for_turn.length > 0) {
+        //send last word time, even though it was not guessed
+        var time = new Date().getTime() - state_last_word_time;
+        ws_request_word_info(get_word().text(), time, true);
+    }
 
     /* send turn results */
     get_turn_me_active().hide();
     //state_turn_num++;
-    ws_request_commit_turn(state_room_name, state_room_pass, state_player_name, state_words_done, state_turn_num);
+
+    //not used anymore, each word is submitted individually
+    // ws_request_commit_turn(state_room_name, state_room_pass, state_player_name, state_words_done, state_turn_num);
 }
 
 function enter_gameend() {
@@ -657,6 +666,7 @@ function set_ui_state_pre_room() {
     $('#game_aftermath').hide();
     $('#situp').html(''); //clear situp schema
     $('#room_enter_player_name').hide();
+    $(".last_word_holder").hide(); //hide last word holders
 
     $('#room_name').val(Cookies.get('ht_room_name'));
     $('#room_pass').val(Cookies.get('ht_room_pass'));
