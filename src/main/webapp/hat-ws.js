@@ -176,6 +176,7 @@ function ws_request_set_name(player_name) {
 }
 
 function ws_request_word_info(word, time_to_guess, is_last) {
+    log("word " + word + " in " + time_to_guess);
     var data =
     {
         "action":"commit_answer",

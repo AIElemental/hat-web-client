@@ -13,6 +13,7 @@ var state_turn_name = '';
 var state_turn_num = 0;
 
 var turn_active = false;
+var turn_timed_out = false;
 var state_words_done = [];
 var state_words_for_turn = [];
 var state_last_word_time = 0;
@@ -415,11 +416,13 @@ function fetch_next_word() {
 function hatgame_start_turn() {
     log('Start my turn');
     turn_active = true;
+    turn_timed_out = false;
     activateTimer(state_turn_time_sec);
     setTimeout(function () {
         stopTimer();
         if (turn_active) {
             turn_active = false;
+            turn_timed_out = true;
             hatgame_end_turn();
         }
     }, state_turn_time_sec * 1000);
@@ -447,7 +450,7 @@ function hatgame_next_word() {
 
 function hatgame_end_turn() {
     //if there are remaining words in game
-    if (state_words_for_turn.length > 0) {
+    if (turn_timed_out) {
         //send last word time, even though it was not guessed
         var time = new Date().getTime() - state_last_word_time;
         ws_request_word_info(get_word().text(), time, true);
