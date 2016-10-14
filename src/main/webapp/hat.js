@@ -439,6 +439,9 @@ function hatgame_next_word() {
     var time = new Date().getTime() - state_last_word_time;
     ws_request_word_info(cur_word, time, false);
 
+    var current_player = $('#ui_player_' + state_player_name + '_score');
+    current_player.text(parseInt(current_player.text()) + 1);
+
     $('#done_words_holder').append(' <span class="word_tile">' + cur_word + '</span>');
     $('#ui_button_next_word').attr("disabled", true).addClass("disabled");
 
