@@ -364,7 +364,8 @@ function hatgame_submit_words(jqueryElement) {
     for (i = 0; i < lines.length; ++i) {
         lines[i] = lines[i].trim();
     }
-    ws_request_commit_words(state_room_name, state_room_pass, state_player_name, lines);
+    //not used anymore, each word is submitted individually
+    //ws_request_commit_words(state_room_name, state_room_pass, state_player_name, lines);
     submit_button.hide();
     //post_message("Words sent. Awaiting other players...");
 }
