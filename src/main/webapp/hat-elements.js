@@ -29,3 +29,29 @@ function get_word() {
     }
     return word;
 }
+
+var last_word_word;
+function get_last_word_word() {
+    if (!last_word_word) {
+        last_word_word = $(".last_word_word");
+    }
+    return last_word_word;
+}
+
+var last_word_time;
+function get_last_word_time() {
+    if (!last_word_time) {
+        last_word_time = $(".last_word_time");
+    }
+    return last_word_time;
+}
+
+var last_word_author;
+function get_last_word_author() {
+    if (!last_word_author) {
+        last_word_author = $(".last_word_author");
+    }
+    return last_word_author;
+}
+
+

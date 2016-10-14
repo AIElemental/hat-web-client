@@ -15,6 +15,7 @@ var state_turn_num = 0;
 var turn_active = false;
 var state_words_done = [];
 var state_words_for_turn = [];
+var state_last_word_time = 0;
 
 var const_ui_state_no_room = 0;
 var const_ui_state_in_room = 1;
@@ -165,7 +166,7 @@ function set_situp(situp_schema) {
 
 function partner(player_name) {
     var player_index = state_situp.indexOf(player_name);
-    player_index = (player_index + state_situp.length/2) % state_situp.length;
+    player_index = (player_index + state_situp.length / 2) % state_situp.length;
     return state_situp[player_index];
 }
 
@@ -317,6 +318,12 @@ function room_set_players_situp(jquery_div_container, players) {
     jquery_div_container.html(players_html);
 }
 
+function show_word_info(word, time_to_guess, author) {
+    get_last_word_word().text(word);
+    get_last_word_time().text(time_to_guess);
+    get_last_word_author().text(author);
+}
+
 /* Game functions */
 function enter_new_game() {
     log('Entering new game');
@@ -387,6 +394,7 @@ function enter_turn_stage() {
 function fetch_next_word() {
     if (state_words_for_turn.length > 0) {
         get_word().text(state_words_for_turn.shift());
+        state_last_word_time = new Date().getTime();
     } else {
         stopTimer();
         if (turn_active) {
@@ -419,6 +427,10 @@ function hatgame_next_word() {
     var cur_word = get_word().text();
     state_words_done.push(cur_word);
     log(state_words_done);
+
+    var time = new Date().getTime() - state_last_word_time;
+    ws_request_word_info(cur_word, time, false);
+
     $('#done_words_holder').append(' <span class="word_tile">' + cur_word + '</span>');
     $('#ui_button_next_word').attr("disabled", true).addClass("disabled");
 
@@ -429,6 +441,10 @@ function hatgame_next_word() {
 }
 
 function hatgame_end_turn() {
+    //send last word time, even though it was not guessed
+    var time = new Date().getTime() - state_last_word_time;
+    ws_request_word_info(get_word().text(), time, true);
+
     /* send turn results */
     get_turn_me_active().hide();
     //state_turn_num++;
@@ -548,7 +564,6 @@ function handle_ws_word_generation(data) {
     var json = JSON.parse(data);
     var room_name = json["room_name"];
     var state = json["state"];
-    var num = 1123;
     if (state === "word_generation") {
         log('handle_ws_word_generation');
         var players = json["data"]["players"];
@@ -613,6 +628,19 @@ function handle_ws_set_name(data) {
         } else {
             post_message("Name already taken");
         }
+    }
+}
+
+function handle_ws_word_info(raw_data) {
+    var json = JSON.parse(raw_data);
+    var action = json["action"];
+    if (action === "word_info") {
+        log('handle_ws_word_info');
+        var data = json["data"];
+        var word = data["word"];
+        var time = data["time"];
+        var author = data["author"];
+        show_word_info(word, time, author);
     }
 }
 
@@ -767,7 +795,7 @@ function init() {
 
     var saved_backend = Cookies.get('ht_wsbe');
     if (!saved_backend || saved_backend === '' || saved_backend === 'undefined') {
-        saved_backend = 'ws://46.101.133.65:8888/ws';
+        saved_backend = 'ws://139.59.136.7:8888/ws';
     }
     set_backend(saved_backend);
 
@@ -778,6 +806,7 @@ function init() {
     ws_add_handler(handle_ws_hatgame);
     ws_add_handler(handle_ws_endgame);
     ws_add_handler(handle_ws_set_name);
+    ws_add_handler(handle_ws_word_info);
     connect();
 }
 

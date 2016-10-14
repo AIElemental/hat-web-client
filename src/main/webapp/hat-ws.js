@@ -175,6 +175,19 @@ function ws_request_set_name(player_name) {
     ws_send(data);
 }
 
+function ws_request_word_info(word, time_to_guess, is_last) {
+    var data =
+    {
+        "action":"commit_answer",
+        "data" : {
+            //"word": word,
+            "time": time_to_guess,
+            "last": is_last
+        }
+    };
+    ws_send(data);
+}
+
 
 function socket_test() {
     var socket;
