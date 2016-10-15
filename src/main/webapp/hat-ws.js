@@ -189,6 +189,15 @@ function ws_request_word_info(word, time_to_guess, is_last) {
     ws_send(data);
 }
 
+function ws_request_reroll_situp() {
+    var data =
+    {
+        "action":"reroll_teams",
+        "data" : {
+        }
+    };
+    ws_send(data);
+}
 
 function socket_test() {
     var socket;

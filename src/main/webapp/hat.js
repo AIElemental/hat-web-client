@@ -12,6 +12,7 @@ var state_situp = [];
 var state_turn_name = '';
 var state_turn_num = 0;
 
+var reroll_available = true;
 var turn_active = false;
 var turn_timed_out = false;
 var state_words_done = [];
@@ -464,6 +465,10 @@ function hatgame_end_turn() {
     // ws_request_commit_turn(state_room_name, state_room_pass, state_player_name, state_words_done, state_turn_num);
 }
 
+function hatgame_reroll_situp() {
+    ws_request_reroll_situp();
+}
+
 function enter_gameend() {
     set_ui_layout(const_ui_state_endgame);
 }
@@ -660,6 +665,17 @@ function handle_ws_word_info(raw_data) {
     }
 }
 
+function handle_ws_reroll(raw_data) {
+    var json = JSON.parse(raw_data);
+    var action = json["action"];
+    if (action === "reroll_team") {
+        log('handle_ws_word_info');
+        var data = json["data"];
+        var situp_schema = data["new_situp"];
+        room_set_players_situp($('#situp'), situp_schema);
+    }
+}
+
 /* UI configs */
 function set_ui_state_pre_room() {
     log('set pre_room layout');
@@ -732,6 +748,11 @@ function set_ui_state_turn_me() {
     get_turn_me_active().hide();
     $('#game_aftermath').hide();
     $('#room_enter_player_name').hide();
+    if (reroll_available) {
+        $('#hatgame_turn_me_reroll').show();
+    } else {
+        $('#hatgame_turn_me_reroll').hide();
+    }
 }
 function set_ui_state_endgame() {
     log('set endgame layout');
@@ -824,6 +845,7 @@ function init() {
     ws_add_handler(handle_ws_endgame);
     ws_add_handler(handle_ws_set_name);
     ws_add_handler(handle_ws_word_info);
+    ws_add_handler(handle_ws_reroll);
     connect();
 }
 
