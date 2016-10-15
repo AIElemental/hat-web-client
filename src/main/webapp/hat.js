@@ -433,6 +433,8 @@ function hatgame_start_turn() {
 }
 
 function hatgame_next_word() {
+    reroll_available = false;
+
     var cur_word = get_word().text();
     state_words_done.push(cur_word);
     log(state_words_done);
@@ -470,6 +472,7 @@ function hatgame_reroll_situp() {
 }
 
 function enter_gameend() {
+    reroll_available = false;
     set_ui_layout(const_ui_state_endgame);
 }
 
