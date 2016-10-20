@@ -241,6 +241,16 @@
                 <span class="tab_title">Current word: </span><span id="word" class="word_tile"></span>
                 <br>
                 <button id="ui_button_next_word" class="button" onclick="hatgame_next_word()">Word done</button>
+                <script>
+                    /* TODO keydown should be global page */
+                    $('#ui_button_next_word').on('keydown', function (e) {
+                        if (e.which == 32 || e.which == 13 || e.which == 10) { /* Space, Enter */
+                            if (get_turn_me_active().is(":visible")) {
+                                $('#ui_button_next_word').click();
+                            }
+                        }
+                    });
+                </script>
             </div>
             <br>
             <span class="tab_title">Done words: </span><span id="done_words_holder"></span>

@@ -472,7 +472,8 @@ function hatgame_reroll_situp() {
 }
 
 function enter_gameend() {
-    reroll_available = false;
+    reroll_available = true;
+    state_turn_num = 0;
     set_ui_layout(const_ui_state_endgame);
 }
 
@@ -602,6 +603,10 @@ function handle_ws_hatgame(data) {
     var state = json["state"];
     if (state === "hatgame") {
         log('handle_ws_hatgame');
+        state_turn_num++;
+        if (state_turn_num > 1) {
+            reroll_available = false;
+        }
         var players = json["data"]["players"];
         var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
