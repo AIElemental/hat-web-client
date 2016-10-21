@@ -18,6 +18,7 @@ var turn_timed_out = false;
 var state_words_done = [];
 var state_words_for_turn = [];
 var state_last_word_time = 0;
+var state_game_start_time = new Date;
 
 var const_ui_state_no_room = 0;
 var const_ui_state_in_room = 1;
@@ -33,6 +34,24 @@ function getDateTime() {
     var hour = now.getHours();
     var minute = now.getMinutes();
     var second = now.getSeconds();
+    if (hour.toString().length == 1) {
+        hour = '0' + hour;
+    }
+    if (minute.toString().length == 1) {
+        minute = '0' + minute;
+    }
+    if (second.toString().length == 1) {
+        second = '0' + second;
+    }
+    return hour + ':' + minute + ':' + second;
+}
+
+function getTimeSince(start) {
+    var now = new Date();
+    var diffSeconds = Math.round((now.getTime() - start.getTime()) / 1000);
+    var hour = Math.floor(diffSeconds / 3600);
+    var minute = Math.floor(diffSeconds % 3600 / 60);
+    var second = diffSeconds % 60;
     if (hour.toString().length == 1) {
         hour = '0' + hour;
     }
@@ -333,8 +352,8 @@ function show_word_info(word, time_to_guess, author) {
 
 function update_lines_on_word_gen(number) {
     var text = "1";
-    for (var i = 1; i < number; ++i) {
-        text += "\n" + (i + 1);
+    for (var i = 2; i <= number; ++i) {
+        text += "\n" + i;
     }
     $("#word_enter_lines").text(text);
 }
@@ -344,6 +363,16 @@ function enter_new_game() {
     log('Entering new game');
     set_ui_layout(const_ui_state_word_gen);
     update_lines_on_word_gen(state_words_per_player);
+    state_game_start_time = new Date;
+    var game_timer = $('#game_timer');
+    game_timer.text(getTimeSince(state_game_start_time));
+
+    var intervalId = setInterval(function () {
+        game_timer.text(getTimeSince(state_game_start_time));
+        if (!$('#room_info').is(":visible")) {
+            clearInterval(intervalId); //self clear on entering room search
+        }
+    }, 1000);
     /* store game state info into cookie */
 }
 
