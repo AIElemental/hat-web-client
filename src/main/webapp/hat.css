@@ -113,3 +113,21 @@ span.situp {
     font-size: 125%;
     font-style: italic;
 }
+
+.word_enter_container{
+    position:relative;
+}
+#word_enter_lines {  
+  display: inline-block;
+  width: 10px;
+  height: 250px;
+  resize: none;
+  overflow: hidden;
+}
+#word_enter {
+  position:absolute;
+  margin-left: 0px;
+  display: inline-block;
+  height: 250px;  
+  resize: none;  
+}

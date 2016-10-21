@@ -331,10 +331,19 @@ function show_word_info(word, time_to_guess, author) {
     get_last_word_author().text(author);
 }
 
+function update_lines_on_word_gen(number) {
+    var text = "1";
+    for (var i = 1; i < number; ++i) {
+        text += "\n" + (i + 1);
+    }
+    $("#word_enter_lines").text(text);
+}
+
 /* Game functions */
 function enter_new_game() {
     log('Entering new game');
     set_ui_layout(const_ui_state_word_gen);
+    update_lines_on_word_gen(state_words_per_player);
     /* store game state info into cookie */
 }
 
@@ -607,7 +616,8 @@ function handle_ws_hatgame(data) {
         if (state_turn_num > 1) {
             reroll_available = false;
         }
-        var players = json["data"]["players"];
+        // var players = json["data"]["players"];
+        var players = json["data"]["situp"];
         var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
         var words_remaining = json["data"]["words_remaining"];
@@ -680,7 +690,10 @@ function handle_ws_reroll(raw_data) {
         log('handle_ws_word_info');
         var data = json["data"];
         var situp_schema = data["new_situp"];
+        var player_name_container = $('#players_list');
+        room_set_players(player_name_container, situp_schema);
         room_set_players_situp($('#situp'), situp_schema);
+        set_situp(situp_schema);
     }
 }
 

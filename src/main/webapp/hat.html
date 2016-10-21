@@ -201,10 +201,11 @@
     </div>
     <div id="game_word_enter">
         <span class="tab_title">Word Generation<span id="ui_words_per_player"></span></span>
-        <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>
-        <br>
-        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words
-        </button>
+        <div class="word_enter_container">
+            <textarea disabled id='word_enter_lines' rows="14" cols="2" placeholder=""></textarea>
+            <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>        
+        </div>
+        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words</button>
     </div>
     <div id="game_turn">
         <div id="hatgame_turn_other">
@@ -312,7 +313,7 @@
 //                }
             }
             if (e.which == 119) {
-                $("#backend-holder").toggle();
+                //$("#backend-holder").toggle();
             }
 //            if (e.which == 115) {
 //                $("#debug_state").toggle();
