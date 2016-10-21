@@ -367,8 +367,11 @@ function enter_new_game() {
     var game_timer = $('#game_timer');
     game_timer.text(getTimeSince(state_game_start_time));
 
+    var game_aftermath = $('#game_aftermath');
     var intervalId = setInterval(function () {
-        game_timer.text(getTimeSince(state_game_start_time));
+        if (!game_aftermath.is(":visible")) {
+            game_timer.text(getTimeSince(state_game_start_time));
+        }
         if (!$('#room_info').is(":visible")) {
             clearInterval(intervalId); //self clear on entering room search
         }

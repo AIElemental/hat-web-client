@@ -205,9 +205,11 @@
         <span class="tab_title">Word Generation<span id="ui_words_per_player"></span></span>
         <div class="word_enter_container">
             <textarea disabled id='word_enter_lines' rows="14" cols="2" placeholder=""></textarea>
-            <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>        
+            <textarea id='word_enter' rows="14" cols="50" placeholder="Enter words here"></textarea>
         </div>
-        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit words</button>
+        <button id="ui_submit_words_button" class="button" onclick="hatgame_submit_words($('#word_enter'))">Submit
+            words
+        </button>
     </div>
     <div id="game_turn">
         <div id="hatgame_turn_other">
@@ -249,7 +251,10 @@
                     $(document).on('keydown', function (e) {
                         if (e.which == 32) { /* Space, Enter */
                             if (get_turn_me_active().is(":visible")) {
-                                $('#ui_button_next_word').click();
+                                var nextWordButton = $('#ui_button_next_word');
+                                if (!nextWordButton.is(":disabled")) {
+                                    nextWordButton.click();
+                                }
                             }
                         }
                     });
