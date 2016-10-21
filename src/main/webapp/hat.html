@@ -243,8 +243,8 @@
                 <button id="ui_button_next_word" class="button" onclick="hatgame_next_word()">Word done</button>
                 <script>
                     /* TODO keydown should be global page */
-                    $('#ui_button_next_word').on('keydown', function (e) {
-                        if (e.which == 32 || e.which == 13 || e.which == 10) { /* Space, Enter */
+                    $(document).on('keydown', function (e) {
+                        if (e.which == 32) { /* Space, Enter */
                             if (get_turn_me_active().is(":visible")) {
                                 $('#ui_button_next_word').click();
                             }
