@@ -131,3 +131,12 @@ span.situp {
   height: 250px;  
   resize: none;  
 }
+.downvote_button {
+  background-image: url(images/arrowdownred.gif);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  /* put the height and width of your image here */
+  height: 32px;
+  width: 32px;
+  border: none;
+}

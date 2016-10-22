@@ -103,7 +103,12 @@
             <button id="btn-room-submit_player" class="button"
                     onclick="try_set_player_name($('#player_name').val());">
                 Submit
-            </button>
+            </button>            
+            <script>
+                $('.downvote_button').click(function() {
+                    alert("Clicked");
+                });
+            </script>            
         </div>
     </div>
     <div id="room_create_enter" class="pre-room">
@@ -274,7 +279,16 @@
                             <br>
                             author: <span class="last_word_author"></span>
                         </td>
-                        </td></tr>
+                        <!--
+                        <td>
+                            <button type="submit" id="dvote_last" class="button downvote_button"></button>
+                            <script>
+                                log('Downvote last word');
+                                $('#dvote_last');
+                            </script>
+                        </td>
+                        -->
+                    </tr>
                 </table>
             </div>
         </div>

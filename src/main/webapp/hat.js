@@ -329,12 +329,29 @@ function room_set_players_turn(players, turn_player, scores) {
 function room_set_players_situp(jquery_div_container, players) {
     var players_html = '';
     var radius = 50;
-    for (var i = 0; i < players.length; ++i) {
-        var x = radius + radius * Math.cos(i * 2 * Math.PI / players.length);
-        var y = radius + radius * Math.sin(i * 2 * Math.PI / players.length);
+    /*for (var i = 0; i < players.length; ++i) {
+     var x = radius + radius * Math.cos(i * 2 * Math.PI / players.length);
+     var y = radius + radius * Math.sin(i * 2 * Math.PI / players.length);
+     var style = 'style="left:' + x + 'px;top:' + y + 'px;"';
+     log(style);
+     players_html += '<span class="situp" ' + style + '>' + players[i] + '</span>';
+     }*/
+    for (var i = 0; i < players.length * 2; ++i) {
+        var x = radius + radius * Math.cos(i * 2 * Math.PI / (players.length * 2));
+        var y = radius + radius * Math.sin(i * 2 * Math.PI / (players.length * 2));
         var style = 'style="left:' + x + 'px;top:' + y + 'px;"';
         log(style);
-        players_html += '<span class="situp" ' + style + '>' + players[i] + '</span>';
+        var label;
+        if (i % 2 == 0) {
+            label = players[i/2];
+        } else {
+            if (i < players.length) {
+                label = '<';
+            } else {
+                label = '>';
+            }
+        }
+        players_html += '<span class="situp" ' + style + '>' + label + '</span>';
     }
     jquery_div_container.html(players_html);
 }
@@ -342,7 +359,7 @@ function room_set_players_situp(jquery_div_container, players) {
 function show_word_info(word, time_to_guess, author) {
     $(".last_word_holder").show();
     get_last_word_word().text(word);
-    var time = time_to_guess/1000;
+    var time = time_to_guess / 1000;
     if (time > 5) {
         time = Math.round(time + 0.5);
     }
@@ -718,14 +735,17 @@ function handle_ws_word_info(raw_data) {
 function handle_ws_reroll(raw_data) {
     var json = JSON.parse(raw_data);
     var action = json["action"];
-    if (action === "reroll_team") {
+    if (action === "reroll_teams") {
         log('handle_ws_word_info');
         var data = json["data"];
         var situp_schema = data["new_situp"];
         var player_name_container = $('#players_list');
         room_set_players(player_name_container, situp_schema);
+        var scores = new Array(situp_schema.length).fill(0);
+        room_set_players_turn(situp_schema, '', scores);
         room_set_players_situp($('#situp'), situp_schema);
         set_situp(situp_schema);
+        post_message("Teams rerolled into :" + situp_schema);
     }
 }
 
