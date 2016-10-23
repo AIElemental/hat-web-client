@@ -629,6 +629,10 @@ function handle_ws_in_room(data) {
     if (state === "in_room") {
         log('handle_ws_in_room');
         var players = json["data"]["players"];
+        if (!players) {
+            /* I wish i had the "players" back */
+            players = json["data"]["situp"];
+        }
         room_set_players($('#players_list'), players);
 
         set_room_name(json["room_name"]);
@@ -647,6 +651,10 @@ function handle_ws_word_generation(data) {
     if (state === "word_generation") {
         log('handle_ws_word_generation');
         var players = json["data"]["players"];
+        if (!players) {
+            /* I wish i had the "players" back */
+            players = json["data"]["situp"];
+        }
         var words_players = json["data"]["words_pending_from"];
         room_set_players_words_pending($('#players_list'), players, words_players);
 
@@ -665,8 +673,11 @@ function handle_ws_hatgame(data) {
         if (state_turn_num > 1) {
             reroll_available = false;
         }
-        // var players = json["data"]["players"];
-        var players = json["data"]["situp"];
+        var players = json["data"]["players"];
+        if (!players) {
+            /* I wish i had the "players" back */
+            players = json["data"]["situp"];
+        }
         var turn_player = json["data"]["turn_player"];
         var scores = json["data"]["scores"];
         var words_remaining = json["data"]["words_remaining"];
@@ -692,6 +703,10 @@ function handle_ws_endgame(data) {
     if (state === "endgame") {
         log('handle_ws_endgame');
         var players = json["data"]["players"];
+        if (!players) {
+            /* I wish i had the "players" back */
+            players = json["data"]["situp"];
+        }
         var scores = json["data"]["scores"];
         room_set_players_turn(players, '', scores);
         room_set_players_situp($('#situp'), json["data"]["situp"]);
