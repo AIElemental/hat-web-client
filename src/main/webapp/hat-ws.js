@@ -6,7 +6,7 @@ function connect() {
     try {
         var host = backend;
         if (!host || host === '' || host === 'undefined') {
-            host = 'ws://46.101.133.65:8888/ws';
+            //pass
         }
         log('Connecting to web socket at ' + host);
         socket = new WebSocket(host);
@@ -202,7 +202,7 @@ function ws_request_reroll_situp() {
 function socket_test() {
     var socket;
     try {
-        var host = 'ws://46.101.133.65:8888/ws/';
+        var host = 'ws://127.0.0.1:8888/ws/';
         log('Test Connecting to web socket at ' + host);
         socket = new WebSocket(host);
 

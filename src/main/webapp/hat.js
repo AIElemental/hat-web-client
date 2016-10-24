@@ -921,7 +921,7 @@ function init() {
 
     var saved_backend = Cookies.get('ht_wsbe');
     if (!saved_backend || saved_backend === '' || saved_backend === 'undefined') {
-        saved_backend = 'ws://139.59.136.7:8888/ws';
+        //pass
     }
     set_backend(saved_backend);
 
