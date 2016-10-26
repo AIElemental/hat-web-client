@@ -95,11 +95,26 @@ var timerId;
 function activateTimer(time) {
     var start = new Date;
     timerId = setInterval(function () {
-        get_turn_timer().text(Math.round((time - (new Date - start) / 1000)) + " Seconds");
-    }, 171);
+        var remainingSec = time - (new Date - start) / 1000.0;
+        remainingSec = Math.max(remainingSec, 0.0);
+        setUITimer(remainingSec);
+        $('#turn_timer_bar').width((100 * (remainingSec / time)) + '%');
+    }, 13);
 }
 function stopTimer() {
     clearInterval(timerId);
+}
+
+function setUITimer(time) {
+    var timeTxt = Math.round(time) + '\xa0' + "Seconds";
+    //get_turn_timer().text(timeTxt);
+    $('#turn_timer_bar_label_fore').html(timeTxt);
+    $('#turn_timer_bar_label_back').html(timeTxt);
+}
+
+function initUITimer(time) {
+    setUITimer(time);
+    $('#turn_timer_bar').width('100%');
 }
 
 function post_message(message) {
@@ -435,7 +450,7 @@ function hatgame_submit_words(jqueryElement) {
 }
 
 function enter_turn_my() {
-    get_turn_timer().text(state_turn_time_sec + " Seconds");
+    initUITimer(state_turn_time_sec);
     $('#done_words_holder').html('');
     state_words_done = [];
     set_ui_layout(const_ui_state_turn_me);
@@ -841,6 +856,12 @@ function set_ui_state_turn_me() {
     } else {
         $('#hatgame_turn_me_reroll').hide();
     }
+    //reset timer bar text position
+    var a = $('#turn_timer_bar_container').outerWidth(true) / 2;
+    var label_back = $("#turn_timer_bar_label_back");
+    a -= label_back.width / 2;
+    label_back.css('marginLeft', a + "px");
+    $("#turn_timer_bar_label_fore").css('marginLeft', a + "px");
 }
 function set_ui_state_endgame() {
     log('set endgame layout');

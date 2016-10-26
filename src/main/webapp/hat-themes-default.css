@@ -64,3 +64,19 @@ body.theme-default *.maintab {
 body.theme-default *.leftfloat {
     background-color: #B9DFE0;
 }
+
+body.theme-default *.progress_bar_container {
+    background-color: #DFFFF0;
+}
+
+body.theme-default *.progress_bar {
+    background-color: #62A678;
+}
+
+body.theme-default *.progress_bar_label_fore {
+    color: white;
+}
+
+body.theme-default *.progress_bar_label_back {
+    color:  black;
+}

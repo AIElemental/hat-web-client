@@ -106,3 +106,19 @@ body.theme-darkula *.maintab {
 body.theme-darkula *.leftfloat {
     background-color: #3C3F41;
 }
+
+body.theme-darkula *.progress_bar_container {
+    background-color: #2B2B2B;
+}
+
+body.theme-darkula *.progress_bar {
+    background-color: #E8BF6A;
+}
+
+body.theme-darkula *.progress_bar_label_fore {
+    color: #3C3F41;
+}
+
+body.theme-darkula *.progress_bar_label_back {
+    color:  #cc7832;
+}

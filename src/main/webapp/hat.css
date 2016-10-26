@@ -105,7 +105,8 @@ span.situp {
 }
 
 #room_select_container select {
-    padding:10px; margin:-5px -20px -5px -5px;
+    padding: 10px;
+    margin: -5px -20px -5px -5px;
 }
 
 #nav_player {
@@ -114,29 +115,63 @@ span.situp {
     font-style: italic;
 }
 
-.word_enter_container{
-    position:relative;
+.word_enter_container {
+    position: relative;
 }
-#word_enter_lines {  
-  display: inline-block;
-  width: 10px;
-  height: 250px;
-  resize: none;
-  overflow: hidden;
+
+#word_enter_lines {
+    display: inline-block;
+    width: 10px;
+    height: 250px;
+    resize: none;
+    overflow: hidden;
 }
+
 #word_enter {
-  position:absolute;
-  margin-left: 0px;
-  display: inline-block;
-  height: 250px;  
-  resize: none;  
+    position: absolute;
+    margin-left: 0px;
+    display: inline-block;
+    height: 250px;
+    resize: none;
 }
+
 .downvote_button {
-  background-image: url(images/arrowdownred.gif);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  /* put the height and width of your image here */
-  height: 32px;
-  width: 32px;
-  border: none;
+    background-image: url(images/arrowdownred.gif);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    /* put the height and width of your image here */
+    height: 32px;
+    width: 32px;
+    border: none;
+}
+
+.progress_bar_container {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    border: solid grey 1px;
+}
+
+.progress_bar {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.progress_bar_label_fore {
+    position: absolute;
+    text-align: left;
+    line-height: 30px;
+}
+
+.progress_bar_label_back {
+    position: absolute;
+    text-align: left;
+    line-height: 30px;
+}
+
+.ui_fat_text {
+    font-size: 150%;
+    font-style: italic;
 }

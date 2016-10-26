@@ -240,7 +240,15 @@
         </div>
         <div id="hatgame_turn_me">
             <span class="tab_title">Game - My turn</span>
-            <span id="turn_timer" class="ui_player_name">time</span>
+            <!--
+            <span id="turn_timer" class="ui_player_name hidden_div">time</span>
+            -->
+            <div id="turn_timer_bar_container" class="progress_bar_container">
+                <div id="turn_timer_bar_label_back" class="progress_bar_label_back ui_fat_text"></div>
+                <div id="turn_timer_bar" class="progress_bar">
+                    <div id="turn_timer_bar_label_fore" class="progress_bar_label_fore ui_fat_text"></div>
+                </div>
+            </div>
             <div id="hatgame_turn_me_reroll" style="display: none">
                 <button class="button" onclick="hatgame_reroll_situp()">Reroll situp</button>
             </div>
