@@ -1,0 +1,177 @@
+body {
+    font-family: "Lucida Console", sans-serif;
+}
+
+.hidden_div {
+    display: none;
+}
+
+#page {
+    margin-left: 200px;
+}
+
+#room_select {
+    width: 150px;
+}
+
+.ui_player_name {
+    display: block;
+    font-size: 150%;
+    font-style: italic;
+    transition: font-weight 500ms, background-color 800ms;
+}
+
+.ui_player_turn {
+    font-weight: bold;
+}
+
+.maintab {
+    float: right;
+    width: 100%;
+    border-style: none none none dotted;
+}
+
+.leftfloat {
+    float: left;
+    width: 190px;
+    margin-left: -200px;
+
+}
+
+.tab_title {
+    font-size: 150%;
+    text-decoration: none;
+    display: block;
+}
+
+.text_input_label {
+    font-size: 150%;
+    text-decoration: none;
+}
+
+.text_input {
+    font-size: 150%;
+    text-decoration: none;
+}
+
+.button {
+    border-style: solid;
+    padding: 2px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 120%;
+}
+
+#infobox {
+    border-style: solid;
+    padding: 3px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 120%;
+}
+
+.word_tile {
+    border-style: none;
+    padding: 6px 8px;
+    margin: 2px 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 165%;
+    transition: transform 400ms;
+}
+
+.word_tile:hover {
+    transform: translate(0px, -6px);
+}
+
+div.situp {
+    position: relative;
+}
+
+span.situp {
+    display: block;
+    position: absolute;
+}
+
+#room_select_container {
+    /*height: 100px;*/
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    border: solid grey 1px;
+}
+
+#room_select_container select {
+    padding: 10px;
+    margin: -5px -20px -5px -5px;
+}
+
+#nav_player {
+    display: inline-block;
+    font-size: 125%;
+    font-style: italic;
+}
+
+.word_enter_container {
+    position: relative;
+}
+
+#word_enter_lines {
+    display: inline-block;
+    width: 10px;
+    height: 250px;
+    resize: none;
+    overflow: hidden;
+}
+
+#word_enter {
+    position: absolute;
+    margin-left: 0px;
+    display: inline-block;
+    height: 250px;
+    resize: none;
+}
+
+.downvote_button {
+    background-image: url(images/arrowdownred.gif);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    /* put the height and width of your image here */
+    height: 32px;
+    width: 32px;
+    border: none;
+}
+
+.progress_bar_container {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    border: solid grey 1px;
+}
+
+.progress_bar {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.progress_bar_label_fore {
+    position: absolute;
+    text-align: left;
+    line-height: 30px;
+}
+
+.progress_bar_label_back {
+    position: absolute;
+    text-align: left;
+    line-height: 30px;
+}
+
+.ui_fat_text {
+    font-size: 150%;
+    font-style: italic;
+}

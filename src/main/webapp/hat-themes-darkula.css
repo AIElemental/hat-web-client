@@ -1,0 +1,124 @@
+/* dark scheme */
+/* color-scheme - darkula - based on IntelliJ WebStorm darkula colors
+cc7832 - orange text
+6897BB - blue text
+E8BF6A - light yellow text
+A9B7C6 - white text
+2B2B2B - dark background
+A5C261 - light green
+808080 - green comment
+8585FF - indigo
+see on switching themes
+http://stackoverflow.com/questions/9979415/dynamically-load-and-unload-stylesheets
+*/
+.palette {
+    color: #cc7832;
+    color: #6897BB;
+    color: #E8BF6A;
+    color: #A9B7C6;
+    color: #2B2B2B; /* background */
+    color: #3C3F41; /* background lighter */
+    color: #A5C261;
+    color: #808080;
+    color: #8585FF;
+}
+
+body.theme-darkula {
+    color: #A9B7C6;
+    background-color: #2B2B2B;
+}
+
+body.theme-darkula a:link, body.theme-darkula a:hover {
+    color: #6897BB;
+}
+
+body.theme-darkula a:active {
+    color: #8585FF;
+}
+
+body.theme-darkula input, body.theme-darkula select, body.theme-darkula textarea {
+    color: #A9B7C6;
+    background-color: #2B2B2B;
+    border-color: #A9B7C6;
+    outline: none;
+}
+
+body.theme-darkula *.button {
+    background-color: #3C3F41;
+    border-color: #E8BF6A #E8BF6A;
+    color: #E8BF6A;
+}
+
+body.theme-darkula *.button.disabled {
+    background-color: #3C3F41;
+    border-color: #A9B7C6;
+    color: #A9B7C6;
+}
+
+body.theme-darkula *.button:hover {
+    background-color: #2B2B2B;
+    border-color: #cc7832 #cc7832;
+    color: #cc7832;
+}
+
+body.theme-darkula *.button.disabled:hover {
+    background-color: #3C3F41;
+    border-color: #A9B7C6;
+    color: #A9B7C6;
+}
+
+body.theme-darkula #infobox {
+    background-color: #808080;
+    border-color: #E8BF6A;
+    color: #cc7832;
+}
+
+body.theme-darkula #infobox:hover {
+    background-color: #3C3F41;
+    border-color: #cc7832;
+}
+
+body.theme-darkula *.word_tile {
+    background-color: #A9B7C6;
+    color: #2B2B2B;
+}
+
+body.theme-darkula *.ui_player_turn {
+    background-color: #A5C261;
+    color: #2B2B2B;
+}
+
+body.theme-darkula *.ui_player_words_pending {
+    background-color: #cc7832;
+    color: #2B2B2B;
+}
+
+body.theme-darkula *.ui_player_words_ready {
+    background-color: #A5C261;
+    color: #2B2B2B;
+}
+
+body.theme-darkula *.maintab {
+    background-color: #2B2B2B;
+    border-color: #C0C0C0;
+}
+
+body.theme-darkula *.leftfloat {
+    background-color: #3C3F41;
+}
+
+body.theme-darkula *.progress_bar_container {
+    background-color: #2B2B2B;
+}
+
+body.theme-darkula *.progress_bar {
+    background-color: #E8BF6A;
+}
+
+body.theme-darkula *.progress_bar_label_fore {
+    color: #3C3F41;
+}
+
+body.theme-darkula *.progress_bar_label_back {
+    color:  #cc7832;
+}
